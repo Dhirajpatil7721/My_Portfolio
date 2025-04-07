@@ -50,12 +50,12 @@ export default function Experience() {
                   <div className="border-l-4 border-emerald-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Saksham Softtech</h4>
                     <p className="text-emerald-600 mb-2 text-sm font-medium">Current</p>
-                    <p className="text-gray-600">React Developer - Building modern web applications with React, Redux, and TypeScript</p>
+                    <p className="text-gray-600">FullStack Developer - Building modern web applications with React, Redux, and API</p>
                   </div>
                   
                   <div className="border-l-4 border-emerald-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Einfratech Systems, Bengaluru</h4>
-                    <p className="text-emerald-600 mb-2 text-sm font-medium">4 months</p>
+                    <p className="text-emerald-600 mb-2 text-sm font-medium">3 months</p>
                     <p className="text-gray-600">React Developer - Developed responsive UIs and integrated REST APIs</p>
                   </div>
                 </div>
