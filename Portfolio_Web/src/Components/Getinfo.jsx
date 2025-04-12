@@ -12,7 +12,7 @@ function Getinfo() {
     const fetchData = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/contact/form");
-        setGetdata(res.data.data); // assuming backend returns { success, data: [...] }
+        setGetdata(res.data.data); 
       } catch (error) {
         console.log("Error fetching data:", error);
       }
@@ -43,11 +43,18 @@ function Getinfo() {
   return (
     
     
-    <div className="mt-5 overflow-x-auto">
+    <div className="mt-5 overflow-x-auto px-10">
        <ToastContainer position="top-right" autoClose={3000} />
        <h1 className="text-center mb-5 text-3xl font-bold">Contact Table</h1>
-
+      {/* <button onClick={() => window.location.reload()}>Refresh</button> */}
+      <button
+  onClick={() => window.location.reload()}
+  className="bg-green-600 text-white px-5 py-1 rounded-lg text-lg hover:bg-green-700 transition mb-2 "
+>
+  🔄 Refresh
+</button>
       <table className="min-w-full border border-gray-300 text-left text-sm">
+
         <thead className="bg-blue-600 text-white">
           <tr>
             <th className="px-4 py-2 border">ID</th>

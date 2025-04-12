@@ -47,7 +47,7 @@ export default function Footer() {
                 navigate('/');
               }}
             />
-            <p className="text-gray-900">Full-Stack Developer</p>
+            <p className="text-white-900">Full-Stack Developer</p>
           </div>
 
           {/* Navigation Links */}

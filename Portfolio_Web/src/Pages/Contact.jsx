@@ -46,12 +46,13 @@ function Contact() {
       const response = await axios.post("http://localhost:5000/api/contact/form", formData);
       toast.success(`${formData.name} Message Sent Successfully!`);
       setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
       toast.error("Failed to send message. Try again!");
       console.error("Error submitting form:", error.response?.data || error.message);
     }
 
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    // setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   // Animation variants
@@ -266,7 +267,7 @@ function Contact() {
                   type="text"
                   id="subject"
                   name="subject"
-                  placeholder="Project Inquiry"
+                  placeholder="Subject"
                   value={formData.subject}
                   onChange={handleChange}
                   required
@@ -282,7 +283,7 @@ function Contact() {
                   id="message"
                   name="message"
                   rows="4"
-                  placeholder="Your message here..."
+                  placeholder="Type your message here..."
                   value={formData.message}
                   onChange={handleChange}
                   required
