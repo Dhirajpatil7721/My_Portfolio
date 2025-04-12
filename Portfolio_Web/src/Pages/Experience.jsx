@@ -50,7 +50,7 @@ export default function Experience() {
                   <div className="border-l-4 border-emerald-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Saksham Softtech</h4>
                     <p className="text-emerald-600 mb-2 text-sm font-medium">Current</p>
-                    <p className="text-gray-600">FullStack Developer - Building modern web applications with React, Redux, and API</p>
+                    <p className="text-gray-600">Fullstack Developer - Building modern web applications</p>
                   </div>
                   
                   <div className="border-l-4 border-emerald-400 pl-4 py-1">

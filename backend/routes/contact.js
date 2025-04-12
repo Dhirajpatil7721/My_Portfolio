@@ -28,23 +28,23 @@ router.get("/form", async (req, res) => {
 router.delete("/form/email/:email", async (req, res) => {
   try {
     const deletedContact = await Contact.findOneAndDelete({ email: req.params.email });
-    
+
     if (!deletedContact) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Message not found for this email" 
+      return res.status(404).json({
+        success: false,
+        message: "Message not found for this email"
       });
     }
 
-    res.status(200).json({ 
-      success: true, 
-      message: "Message deleted successfully" 
+    res.status(200).json({
+      success: true,
+      message: "Message deleted successfully"
     });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      message: "Server Error", 
-      error 
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error
     });
   }
 });
