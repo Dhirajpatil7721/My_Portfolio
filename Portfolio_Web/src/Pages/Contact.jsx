@@ -43,7 +43,7 @@ function Contact() {
     setError({ name: "" });
 
     try {
-      const response = await axios.post("http://localhost:5000/api/contact/form", formData);
+      const response = await axios.post("http://localhost:5000/api/contact", formData);
       toast.success(`${formData.name} Message Sent Successfully!`);
       setFormData({ name: "", email: "", subject: "", message: "" });
       setFormData({ name: "", email: "", subject: "", message: "" });

@@ -1,7 +1,39 @@
+import axios from "axios";
 import { motion } from "framer-motion";
 import { Briefcase, Laptop, GraduationCap } from 'lucide-react';
+import { useEffect, useState } from "react";
+
 
 export default function Experience() {
+
+  const [workExperiences, setWorkExperiences] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchExperience = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/experience");
+        console.log("API response:", response.data);
+        
+        // Ensure to access the 'data' field from the response
+        if (response.data.success && Array.isArray(response.data.data)) {
+          setWorkExperiences(response.data.data); // Set the array of experiences
+        } else {
+          console.error("Unexpected data format", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching experience:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchExperience();
+  }, []);
+  
+  
+
+  
   return (
     <section id="experience" className="bg-white mt-5 py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -45,19 +77,27 @@ export default function Experience() {
                     </span>
                   </h3>
                 </div>
-                
+
                 <div className="space-y-6 pl-2 sm:pl-0">
-                  <div className="border-l-4 border-emerald-400 pl-4 py-1">
-                    <h4 className="text-xl font-semibold text-gray-800">Saksham Softtech</h4>
-                    <p className="text-emerald-600 mb-2 text-sm font-medium">Current</p>
-                    <p className="text-gray-600">Fullstack Developer - Building modern web applications</p>
-                  </div>
-                  
-                  <div className="border-l-4 border-emerald-400 pl-4 py-1">
+                  {loading ? (
+                    <p>Loading...</p>
+                  ) : (
+                    workExperiences.map((exp, idx) => (
+                      <div key={idx} className="border-l-4 border-emerald-400 pl-4 py-1">
+                       <h4 className="text-xl font-bold text-gray-800">{exp.company}</h4>
+        <p className="text-emerald-600 text-sm font-semibold">{exp.position}</p>
+        <p className="text-gray-500 text-sm italic mb-2">{exp.startDate} – {exp.endDate}</p>
+        <p className="text-gray-700 text-sm">{exp.description}</p>
+                      </div>
+                    ))
+                  )}
+
+
+                  {/* <div className="border-l-4 border-emerald-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Einfratech Systems, Bengaluru</h4>
                     <p className="text-emerald-600 mb-2 text-sm font-medium">3 months</p>
                     <p className="text-gray-600">React Developer - Developed responsive UIs and integrated REST APIs</p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -86,14 +126,14 @@ export default function Experience() {
                     </span>
                   </h3>
                 </div>
-                
+
                 <div className="space-y-6 pl-2 sm:pl-0">
                   <div className="border-l-4 border-indigo-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Prodigy InfoTech</h4>
                     <p className="text-indigo-600 mb-2 text-sm font-medium">Mar 2024 (4 weeks)</p>
                     <p className="text-gray-600">Virtual internship focused on modern web development practices</p>
                   </div>
-                  
+
                   <div className="border-l-4 border-indigo-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Codsoft</h4>
                     <p className="text-indigo-600 mb-2 text-sm font-medium">Feb-Mar 2024 (4 weeks)</p>
@@ -127,20 +167,20 @@ export default function Experience() {
                     </span>
                   </h3>
                 </div>
-                
+
                 <div className="space-y-6 pl-2 sm:pl-0">
                   <div className="border-l-4 border-amber-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Machine Learning Session</h4>
                     <p className="text-amber-600 mb-2 text-sm font-medium">Dec 2023</p>
                     <p className="text-gray-600">Insightful session with Dr. D. T. Shirke, Vice-Chancellor of Shivaji University</p>
                   </div>
-                  
+
                   <div className="border-l-4 border-amber-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">ICFAST-2023</h4>
                     <p className="text-amber-600 mb-2 text-sm font-medium">Sept 2023</p>
                     <p className="text-gray-600">International Conference on Science & Technology with Japan Society</p>
                   </div>
-                  
+
                   <div className="border-l-4 border-amber-400 pl-4 py-1">
                     <h4 className="text-xl font-semibold text-gray-800">Poster Presentation</h4>
                     <p className="text-amber-600 mb-2 text-sm font-medium">Feb 2022</p>

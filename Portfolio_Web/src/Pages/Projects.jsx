@@ -1,11 +1,13 @@
 import { FaLaptopCode, FaBook, FaNewspaper, FaGlobe, FaGraduationCap, FaCode, FaCloudSun, FaUtensils, FaPlane } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Projects() {
   const academicProjects = [
     {
       title: "Health Insurance Price Prediction (2022-2023)",
-      icon: <FaLaptopCode className="text-5xl text-blue-600" />, 
+      icon: <FaLaptopCode className="text-5xl text-blue-600" />,  
       description: "Built an advanced Machine Learning model to predict health insurance premiums...",
       github: "https://github.com/Dhirajpatil7721/College_Projects/blob/main/Health%20Insurence%20Price%20Prediction.zip",
     },
@@ -23,58 +25,31 @@ export default function Projects() {
     },
   ];
 
-  const clientProjects = [
-    {
-      title: "Saksham Softech",
-      icon: <FaGlobe className="text-5xl text-purple-600" />,
-      description: "Developed a professional company website with modern UI/UX and responsive design.",
-      github: "https://github.com/Dhirajpatil7721/Saksham_Softech",
-      liveDemo: "https://sakshamsoftech.com/",
-    },
-    {
-      title: "S2J Academy",
-      icon: <FaGraduationCap className="text-5xl text-orange-600" />,
-      description: "Designed and deployed an academy website with interactive features.",
-      github: "https://github.com/Dhirajpatil7721/S2J_Academy",
-      liveDemo: "https://s2jacademy.vercel.app/",
-    },
-    {
-      title: "Einfratech Systems",
-      icon: <FaCode className="text-5xl text-orange-600" />,
-      description: "Developed and launched a company website, improving performance and accessibility.",
-      github: "https://github.com/Dhirajpatil7721/EInfratech_Systems_Official",
-      liveDemo: "https://einfratechproject.vercel.app/",
-    },
-    {
-      title: "IT Company",
-      icon: <FaGlobe className="text-5xl text-orange-600" />,
-      description: "Designed and deployed a personal IT company website with a service inquiry module.",
-      github: "https://github.com/Dhirajpatil7721/It_Company_Portfolio",
-      liveDemo: "http://52.66.244.93:3000/",
-    },
-    {
-      title: "Traveler",
-      icon: <FaPlane className="text-5xl text-orange-600" />,
-      description: "Developed a travel website featuring booking functionality and destination guides.",
-      github: "https://github.com/Dhirajpatil7721/Einfratech_Systems_Task/tree/main/Travel_Webpage",
-      liveDemo: "http://13.233.101.176:3001/",
-    },
-    {
-      title: "Weather App",
-      icon: <FaCloudSun className="text-5xl text-orange-600" />,
-      description: "Built a real-time weather application with API integration and location tracking.",
-      github: "https://github.com/Dhirajpatil7721/Weather_App",
-      liveDemo: "https://weather-app-five-steel-34.vercel.app/",
-    },
-    {
-      title: "Food Webpages",
-      icon: <FaUtensils className="text-5xl text-orange-600" />,
-      description: "Designed and deployed a food website with an interactive menu and ordering system.",
-      github: "https://github.com/Dhirajpatil7721/food",
-      liveDemo: "https://food-theta-two.vercel.app/",
-    },
-  ];
-
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/project");
+        console.log("Project data fetched:", response.data);
+        setProjects(response.data.data);  // Access the `data` array
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProjects();
+  }, []);
+  
+  useEffect(() => {
+    console.log(projects);  // This will now log after projects are updated
+  }, [projects]);  // Runs every time 'projects' state changes
+  
+  
+  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -150,7 +125,8 @@ export default function Projects() {
                   whileHover={{ rotate: 10, scale: 1.1 }}
                   className="mb-4"
                 >
-                  {project.icon}
+                  {/* {project.icon} */}
+                  <FaGlobe className="text-5xl text-orange-600" />
                 </motion.div>
                 <h3 className="text-xl font-semibold mb-3 text-gray-800">{project.title}</h3>
                 <p className="text-gray-600 text-sm mb-6 flex-grow">{project.description}</p>
@@ -192,7 +168,10 @@ export default function Projects() {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
         >
-          {clientProjects.map((project, index) => (
+
+          {/* {projects.map((project, index) => ( */}
+          {[...projects].reverse().map((project, index) => (
+
             <motion.div
               key={index}
               variants={itemVariants}
@@ -204,13 +183,14 @@ export default function Projects() {
                   whileHover={{ rotate: 10, scale: 1.1 }}
                   className="mb-4"
                 >
-                  {project.icon}
+                  {/* {project.ico} */}
+                  <FaGlobe className="text-5xl text-orange-600" />
                 </motion.div>
                 <h3 className="text-xl font-semibold mb-3 text-gray-800">{project.title}</h3>
                 <p className="text-gray-600 text-sm mb-6 flex-grow">{project.description}</p>
                 <div className="flex gap-3 w-full justify-center">
                   <motion.a
-                    href={project.github}
+                    href={project.git}
                     target="_blank"
                     rel="noopener noreferrer"
                     variants={buttonVariants}
@@ -221,7 +201,7 @@ export default function Projects() {
                     GitHub
                   </motion.a>
                   <motion.a
-                    href={project.liveDemo}
+                    href={project.host}
                     target="_blank"
                     rel="noopener noreferrer"
                     variants={buttonVariants}

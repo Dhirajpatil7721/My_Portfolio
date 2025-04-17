@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db.js");
-const contactRoutes = require("./routes/contact.js");
+const apiRoutes = require("./routes/Routeall.js"); 
 
 const app = express();
 
@@ -10,12 +10,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Database Connection
+// Connect to Database
 connectDB();
 
-// Routes
-app.use("/api/contact", contactRoutes);
-   
+// Use Merged API Routes
+app.use("/api", apiRoutes); // Handles /contact, /experience, /project
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
