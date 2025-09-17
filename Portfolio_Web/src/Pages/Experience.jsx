@@ -5,16 +5,17 @@ import { useEffect, useState } from "react";
 
 
 export default function Experience() {
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [workExperiences, setWorkExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchExperience = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/experience");
+        // const response = await axios.get("http://localhost:5000/api/experience");
+        const response = await axios.get(`${API_BASE_URL}/experience`);
         console.log("API response:", response.data);
-        
+
         // Ensure to access the 'data' field from the response
         if (response.data.success && Array.isArray(response.data.data)) {
           setWorkExperiences(response.data.data); // Set the array of experiences
@@ -27,13 +28,13 @@ export default function Experience() {
         setLoading(false);
       }
     };
-  
-    fetchExperience();
-  }, []);
-  
-  
 
-  
+    fetchExperience();
+  }, [API_BASE_URL]);
+
+
+
+
   return (
     <section id="experience" className="bg-white mt-5 py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -84,10 +85,10 @@ export default function Experience() {
                   ) : (
                     workExperiences.map((exp, idx) => (
                       <div key={idx} className="border-l-4 border-emerald-400 pl-4 py-1">
-                       <h4 className="text-xl font-bold text-gray-800">{exp.company}</h4>
-        <p className="text-emerald-600 text-sm font-semibold">{exp.position}</p>
-        <p className="text-gray-500 text-sm italic mb-2">{exp.startDate} – {exp.endDate}</p>
-        <p className="text-gray-700 text-sm">{exp.description}</p>
+                        <h4 className="text-xl font-bold text-gray-800">{exp.company}</h4>
+                        <p className="text-emerald-600 text-sm font-semibold">{exp.position}</p>
+                        <p className="text-gray-500 text-sm italic mb-2">{exp.startDate} – {exp.endDate}</p>
+                        <p className="text-gray-700 text-sm">{exp.description}</p>
                       </div>
                     ))
                   )}

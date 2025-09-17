@@ -1,9 +1,0 @@
-1.  /getinfo   ----for Contact List 
-
-2. /expitable  ---- for Expiiriance table
-3. /expiadd     ---- for Expiiriance Add
-4. /expiupudate  ---- for Expiiriance Update
-
-5. /projecttable   ---- for Project Table
-6. /projectadd     ---- for Project Add
-7. /projectupdate  ---- for Project Update
