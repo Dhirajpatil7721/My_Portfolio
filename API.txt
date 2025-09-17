@@ -1,0 +1,92 @@
+
+### 📬 **Contact APIs**
+
+1. **Add Contact**  
+   `POST http://localhost:5000/api/contact`  
+   ➤ Submit a new contact form entry.
+
+2. **Get All Contacts**  
+   `GET http://localhost:5000/api/contact`  
+   ➤ Retrieve all contact form entries.
+
+3. **Delete Contact by Email**  
+   `DELETE http://localhost:5000/api/contact/email/:email`  
+   ➤ Delete a specific contact entry by providing the email.
+
+---
+
+### 💼 **Experience APIs**
+
+1. **Add Experience**  
+   `POST http://localhost:5000/api/experience`  
+   ➤ Add a new work experience.
+
+2. **Get All Experiences**  
+   `GET http://localhost:5000/api/experience`  
+   ➤ Retrieve all work experiences.
+
+3. **Update Experience by ID**  
+   `PUT http://localhost:5000/api/experience/:id` 
+/experience/company/CompanyName 
+   ➤ Update an experience entry by its ID.
+
+4. **Delete Experience by ID**  
+   `DELETE http://localhost:5000/api/experience/:id`  
+/experience/company/CompanyName
+   ➤ Remove a specific experience entry by ID.
+
+---
+
+### 🚀 **Project APIs**
+
+1. **Add Project**  
+   `POST http://localhost:5000/api/project`  
+   ➤ Add a new project entry.
+
+2. **Get All Projects**  
+   `GET http://localhost:5000/api/project`  
+   ➤ Retrieve all project entries.
+
+3. **Update Project by ID**  
+   `PUT http://localhost:5000/api/project/:id`  
+   ➤ Update a specific project using its ID.
+
+4. **Delete Project by ID**  
+   `DELETE http://localhost:5000/api/project/:id`  
+   ➤ Delete a specific project entry by ID.
+
+
+
+
+POST 
+ http://localhost:5000/api/contact – Add contact
+
+GET 
+ http://localhost:5000/api/contact – Get all contacts
+
+DELETE 
+ http://localhost:5000/api/contact/email/:email – Delete contact by email
+
+POST 
+ http://localhost:5000/api/experience – Add experience
+
+GET 
+ http://localhost:5000/api/experience – Get all experiences
+
+PUT 
+ http://localhost:5000/api/experience/:id – Update experience
+
+DELETE 
+ http://localhost:5000/api/experience/:id – Delete experience
+
+POST 
+ http://localhost:5000/api/project – Add project
+
+GET 
+ http://localhost:5000/api/project – Get all projects
+
+PUT 
+ http://localhost:5000/api/project/:id – Update project
+
+DELETE 
+ http://localhost:5000/api/project/:id – Delete project

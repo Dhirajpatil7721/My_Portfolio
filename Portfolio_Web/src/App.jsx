@@ -15,9 +15,9 @@ import Projectadd from './API/Projectadd'
 import ProjectTable from './API/ProjectTable'
 import ProjectUpdate from './API/ProjectUpdate'
 
-import ExpiTabe from './API/ExpiTabe'
-import ExpiAdd from './API/Expiadd'
-import ExpiUpdate from './API/ExpiUpdate'
+import ExpiTabe from '../src/API/ExpiTabe'
+import ExpiAdd from '../src/API/ExpiAdd'
+import ExpiUpdate from '../src/API/ExpiUpdate'
 
 // Wrapper to use hooks outside Router
 function AppWrapper() {
