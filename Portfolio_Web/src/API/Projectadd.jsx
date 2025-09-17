@@ -1,130 +1,3 @@
-// import axios from 'axios';
-// import React, { useState } from 'react';
-
-// function Projectadd({ onClose }) {
-//     const [formData, setFormData] = useState({
-//         ico: "",
-//         title: "",
-//         description: "",
-//         git: "",
-//         host: "",
-//     });
-
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData((prev) => ({ ...prev, [name]: value }));
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-
-//         axios
-//             .post("http://localhost:5000/api/project", formData)
-//             .then((response) => {
-//                 console.log("Project submitted:", response.data);
-//                 setFormData({ ico: "", title: "", description: "", git: "", host: "" });
-//                 onClose(); // ✅ close modal after submit
-//             })
-//             .catch((error) => {
-//                 console.error("Error posting data:", error);
-//             });
-//     };
-
-//     return (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-//             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-//                 {/* Close Button */}
-//                 <button
-//                     onClick={onClose}
-//                     className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-2xl font-bold"
-//                     type="button"
-//                 >
-//                     &times;
-//                 </button>
-
-//                 {/* Form */}
-//                 <form onSubmit={handleSubmit} className="space-y-4">
-//                     <h2 className="text-xl font-semibold text-center">Submit Project</h2>
-
-//                     <div className="space-y-1">
-//                         <label htmlFor="title" className="text-sm font-medium text-gray-700">Title</label>
-//                         <input
-//                             id="title"
-//                             type="text"
-//                             name="title"
-//                             value={formData.title}
-//                             onChange={handleChange}
-//                             className="w-full border px-3 py-2 rounded"
-//                             placeholder="Project Title"
-//                         />
-//                     </div>
-
-//                     <div className="space-y-1">
-//                         <label htmlFor="ico" className="text-sm font-medium text-gray-700">Icon</label>
-//                         <input
-//                             id="ico"
-//                             type="text"
-//                             name="ico"
-//                             value={formData.ico}
-//                             onChange={handleChange}
-//                             className="w-full border px-3 py-2 rounded"
-//                             placeholder="e.g. FaUtensils"
-//                         />
-//                     </div>
-
-//                     <div className="space-y-1">
-//                         <label htmlFor="description" className="text-sm font-medium text-gray-700">Description</label>
-//                         <textarea
-//                             id="description"
-//                             name="description"
-//                             value={formData.description}
-//                             onChange={handleChange}
-//                             className="w-full border px-3 py-2 rounded"
-//                             rows="3"
-//                         />
-//                     </div>
-
-//                     <div className="space-y-1">
-//                         <label htmlFor="git" className="text-sm font-medium text-gray-700">GitHub URL</label>
-//                         <input
-//                             id="git"
-//                             type="url"
-//                             name="git"
-//                             value={formData.git}
-//                             onChange={handleChange}
-//                             className="w-full border px-3 py-2 rounded"
-//                             placeholder="GitHub URL"
-//                         />
-//                     </div>
-
-//                     <div className="space-y-1">
-//                         <label htmlFor="host" className="text-sm font-medium text-gray-700">Live Demo URL</label>
-//                         <input
-//                             id="host"
-//                             type="url"
-//                             name="host"
-//                             value={formData.host}
-//                             onChange={handleChange}
-//                             className="w-full border px-3 py-2 rounded"
-//                             placeholder="Live URL"
-//                         />
-//                     </div>
-
-//                     <button
-//                         type="submit"
-//                         className="w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700"
-//                     >
-//                         Submit Project
-//                     </button>
-//                 </form>
-//             </div>
-//         </div>
-//     );
-// }
-
-// export default Projectadd;
-
-
 import axios from 'axios';
 import React, { useState } from 'react';
 
@@ -137,7 +10,7 @@ function Projectadd({ onClose }) {
         host: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -148,7 +21,7 @@ function Projectadd({ onClose }) {
         setIsSubmitting(true);
 
         axios
-            .post("http://localhost:5000/api/project", formData)
+            .post(`${API_BASE_URL}/project`, formData)
             .then((response) => {
                 console.log("Project submitted:", response.data);
                 setFormData({ ico: "", title: "", description: "", git: "", host: "" });
@@ -260,11 +133,10 @@ function Projectadd({ onClose }) {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 shadow-lg ${
-                            isSubmitting 
-                                ? 'bg-orange-400 cursor-not-allowed' 
-                                : 'bg-orange-600 hover:bg-orange-700 hover:shadow-xl'
-                        }`}
+                        className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 shadow-lg ${isSubmitting
+                            ? 'bg-orange-400 cursor-not-allowed'
+                            : 'bg-orange-600 hover:bg-orange-700 hover:shadow-xl'
+                            }`}
                     >
                         {isSubmitting ? (
                             <span className="flex items-center justify-center">

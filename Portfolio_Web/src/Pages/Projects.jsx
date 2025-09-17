@@ -4,22 +4,23 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Projects() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const academicProjects = [
     {
       title: "Health Insurance Price Prediction (2022-2023)",
-      icon: <FaLaptopCode className="text-5xl text-blue-600" />,  
+      icon: <FaLaptopCode className="text-5xl text-blue-600" />,
       description: "Built an advanced Machine Learning model to predict health insurance premiums...",
       github: "https://github.com/Dhirajpatil7721/College_Projects/blob/main/Health%20Insurence%20Price%20Prediction.zip",
     },
     {
       title: "Shivaji University Research Papers Portal (2022-2023)",
-      icon: <FaBook className="text-5xl text-green-600" />, 
+      icon: <FaBook className="text-5xl text-green-600" />,
       description: "Developed a platform to access academic research papers, books, and university resources...",
       github: "https://github.com/Dhirajpatil7721/College_Projects/blob/main/Text%20to%20SQL%20LLM%20App%20main.zip",
     },
     {
       title: "Online News Portal (2021-2022)",
-      icon: <FaNewspaper className="text-5xl text-yellow-600" />, 
+      icon: <FaNewspaper className="text-5xl text-yellow-600" />,
       description: "Created a modern news platform offering real-time updates in multiple categories...",
       github: "https://github.com/Dhirajpatil7721/College_Projects/blob/main/Online%20News%20Portal.zip",
     },
@@ -27,11 +28,12 @@ export default function Projects() {
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/project");
+        // const response = await axios.get("http://localhost:5000/api/project");
+             const response = await axios.get(`${API_BASE_URL}/project`);
         console.log("Project data fetched:", response.data);
         setProjects(response.data.data);  // Access the `data` array
       } catch (error) {
@@ -40,16 +42,16 @@ export default function Projects() {
         setLoading(false);
       }
     };
-  
+
     fetchProjects();
   }, []);
-  
+
   useEffect(() => {
     console.log(projects);  // This will now log after projects are updated
   }, [projects]);  // Runs every time 'projects' state changes
-  
-  
-  
+
+
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -121,7 +123,7 @@ export default function Projects() {
               className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all"
             >
               <div className="flex flex-col items-center text-center h-full">
-                <motion.div 
+                <motion.div
                   whileHover={{ rotate: 10, scale: 1.1 }}
                   className="mb-4"
                 >
@@ -179,7 +181,7 @@ export default function Projects() {
               className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all"
             >
               <div className="flex flex-col items-center text-center h-full">
-                <motion.div 
+                <motion.div
                   whileHover={{ rotate: 10, scale: 1.1 }}
                   className="mb-4"
                 >

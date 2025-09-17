@@ -1,81 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-
-// const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
-//     const [updatedExperience, setUpdatedExperience] = useState({ ...existingData });
-
-//     useEffect(() => {
-//         setUpdatedExperience({ ...existingData });
-//     }, [existingData]);
-
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setUpdatedExperience((prev) => ({ ...prev, [name]: value }));
-//     };
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         try {
-//             const encodedCompany = encodeURIComponent(existingData.company);
-//             const res = await axios.put(
-//                 `http://localhost:5000/api/experience/company/${encodedCompany}`,
-//                 updatedExperience
-//             );
-//             onUpdate(res.data.data);  // callback to refresh the updated data in UI
-//             onClose(); // close modal
-//         } catch (err) {
-//             console.error("Error updating experience:", err);
-//         }
-//     };
-
-//     if (!isOpen) return null;
-
-//     return (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-//             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-//                 <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 text-2xl font-bold">
-//                     &times;
-//                 </button>
-//                 <h2 className="text-xl font-bold mb-4 text-center">Update Experience</h2>
-
-//                 <form onSubmit={handleSubmit} className="space-y-4">
-//                     {["company", "position", "startDate", "endDate", "exp", "description"].map((field) => (
-//                         <div key={field}>
-//                             <label className="text-sm font-medium capitalize">{field}</label>
-//                             {field === "description" ? (
-//                                 <textarea
-//                                     name={field}
-//                                     value={updatedExperience[field]}
-//                                     onChange={handleChange}
-//                                     className="w-full border rounded px-3 py-2"
-//                                     required
-//                                 />
-//                             ) : (
-//                                 <input
-//                                     type="text"
-//                                     name={field}
-//                                     value={updatedExperience[field]}
-//                                     onChange={handleChange}
-//                                     className="w-full border rounded px-3 py-2"
-//                                     required
-//                                 />
-//                             )}
-//                         </div>
-//                     ))}
-
-//                     <button
-//                         type="submit"
-//                         className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-//                     >
-//                         Update Experience
-//                     </button>
-//                 </form>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ExpiUpdate;
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -83,7 +5,7 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
     const [updatedExperience, setUpdatedExperience] = useState({ ...existingData });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
     useEffect(() => {
         setUpdatedExperience({ ...existingData });
         setErrors({});
@@ -106,7 +28,7 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
         if (!updatedExperience.endDate.trim()) newErrors.endDate = 'End date is required';
         if (!updatedExperience.exp.trim()) newErrors.exp = 'Experience duration is required';
         if (!updatedExperience.description.trim()) newErrors.description = 'Description is required';
-        
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -114,12 +36,12 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-        
+
         setIsSubmitting(true);
         try {
             const encodedCompany = encodeURIComponent(existingData.company);
             const res = await axios.put(
-                `http://localhost:5000/api/experience/company/${encodedCompany}`,
+                `${API_BASE_URL}/company/${encodedCompany}`,
                 updatedExperience
             );
             onUpdate(res.data.data);

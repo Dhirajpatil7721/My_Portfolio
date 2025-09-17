@@ -13,11 +13,11 @@ const ExpiTabe = () => {
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [selectedExperience, setSelectedExperience] = useState(null);
     const [hoveredRow, setHoveredRow] = useState(null);
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
     useEffect(() => {
         const fetchExperience = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/experience");
+                const response = await axios.get(`${API_BASE_URL}/experience`);
                 setExperienceData(response.data.data || response.data);
                 setLoading(false);
             } catch (err) {
@@ -32,7 +32,7 @@ const ExpiTabe = () => {
     const handleDeleteByCompany = async (companyName) => {
         try {
             const encodedCompany = encodeURIComponent(companyName);
-            await axios.delete(`http://localhost:5000/api/experience/company/${encodedCompany}`);
+            await axios.delete(`${API_BASE_URL}/experience/company/${encodedCompany}`);
             setExperienceData((prevData) => prevData.filter((exp) => exp.company !== companyName));
             toast.warn("Message deleted successfully!");
         } catch (err) {
@@ -62,7 +62,7 @@ const ExpiTabe = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
     );
-    
+
     if (error) return (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
             <p className="font-bold">Error</p>
@@ -72,17 +72,17 @@ const ExpiTabe = () => {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-7xl mt-20">
-             <ToastContainer 
-                    position="top-right" 
-                    autoClose={3000}
-                    hideProgressBar={false}
-                    newestOnTop
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                  />
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-800">Work Experience</h2>
                 <div className="flex space-x-4">
@@ -124,8 +124,8 @@ const ExpiTabe = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {experienceData.map((exp) => (
-                                    <tr 
-                                        key={exp._id} 
+                                    <tr
+                                        key={exp._id}
                                         className={`transition-all duration-200 ${hoveredRow === exp._id ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
                                         onMouseEnter={() => setHoveredRow(exp._id)}
                                         onMouseLeave={() => setHoveredRow(null)}

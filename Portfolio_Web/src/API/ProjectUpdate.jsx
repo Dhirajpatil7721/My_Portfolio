@@ -9,7 +9,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
         git: "",
         host: "",
     });
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
     useEffect(() => {
         if (project) {
             setUpdatedProject({
@@ -32,7 +32,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
-            .put(`http://localhost:5000/api/project/title/${project.title}`, updatedProject)
+            .put(`${API_BASE_URL}/project/title/${project.title}`, updatedProject)
             .then((response) => {
                 console.log("Project updated:", response.data);
                 onProjectUpdated(); // Refresh the project list
@@ -57,7 +57,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                 </button>
 
                 <h3 className="text-2xl font-bold text-gray-800 mb-6">Update Project</h3>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">Title</label>
@@ -70,7 +70,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                             required
                         />
                     </div>
-                    
+
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">Description</label>
                         <textarea
@@ -81,7 +81,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                             required
                         />
                     </div>
-                    
+
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">Icon Class</label>
                         <input
@@ -93,7 +93,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                             placeholder="e.g. FaReact"
                         />
                     </div>
-                    
+
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">GitHub URL</label>
                         <input
@@ -104,7 +104,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                         />
                     </div>
-                    
+
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">Live Demo URL</label>
                         <input
@@ -115,7 +115,7 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                         />
                     </div>
-                    
+
                     <div className="flex justify-end space-x-3 pt-4">
                         <button
                             type="button"

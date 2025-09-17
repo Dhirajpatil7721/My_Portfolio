@@ -6,11 +6,11 @@ import "react-toastify/dist/ReactToastify.css";
 function Getinfo() {
   const [getdata, setGetdata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/contact");
+        const res = await axios.get(`${API_BASE_URL}/contact`);
         setGetdata(res.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -27,7 +27,7 @@ function Getinfo() {
   const deleteItem = async (email) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/contact/email/${email}`,
+        `${API_BASE_URL}/contact/email/${email}`,
         { method: "DELETE" }
       );
 
@@ -45,8 +45,8 @@ function Getinfo() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <ToastContainer 
-        position="top-right" 
+      <ToastContainer
+        position="top-right"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop
@@ -56,7 +56,7 @@ function Getinfo() {
         draggable
         pauseOnHover
       />
-      
+
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900">

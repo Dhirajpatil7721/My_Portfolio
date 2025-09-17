@@ -13,7 +13,7 @@ function Contact() {
     subject: "",
     message: "",
   });
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   const [error, setError] = useState({
     name: "",
   });
@@ -43,7 +43,8 @@ function Contact() {
     setError({ name: "" });
 
     try {
-      const response = await axios.post("http://localhost:5000/api/contact", formData);
+
+      const response = await axios.post(`${API_BASE_URL}/contact`, formData);
       toast.success(`${formData.name} Message Sent Successfully!`);
       setFormData({ name: "", email: "", subject: "", message: "" });
       setFormData({ name: "", email: "", subject: "", message: "" });
@@ -133,7 +134,7 @@ function Contact() {
               className="p-6 bg-white rounded-xl shadow-md border border-gray-200"
             >
               <div className="flex items-start gap-4">
-                <motion.div 
+                <motion.div
                   whileHover={{ rotate: 10, scale: 1.1 }}
                   className="p-3 bg-red-100 rounded-full flex-shrink-0"
                 >
@@ -160,7 +161,7 @@ function Contact() {
                 className="p-6 bg-white rounded-xl shadow-md border border-gray-200"
               >
                 <div className="flex items-start gap-4">
-                  <motion.div 
+                  <motion.div
                     whileHover={{ rotate: 10, scale: 1.1 }}
                     className="p-3 bg-yellow-100 rounded-full flex-shrink-0"
                   >
@@ -168,8 +169,8 @@ function Contact() {
                   </motion.div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Email</h3>
-                    <Link 
-                      to="mailto:dhirajpatil7721@gmail.com" 
+                    <Link
+                      to="mailto:dhirajpatil7721@gmail.com"
                       className="text-gray-600 hover:text-blue-500 transition text-sm sm:text-base break-all"
                     >
                       dhirajpatil7721@gmail.com
@@ -184,7 +185,7 @@ function Contact() {
                 className="p-6 bg-white rounded-xl shadow-md border border-gray-200"
               >
                 <div className="flex items-start gap-4">
-                  <motion.div 
+                  <motion.div
                     whileHover={{ rotate: 10, scale: 1.1 }}
                     className="p-3 bg-green-100 rounded-full flex-shrink-0"
                   >
@@ -192,8 +193,8 @@ function Contact() {
                   </motion.div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Phone</h3>
-                    <Link 
-                      to="tel:+917721888623" 
+                    <Link
+                      to="tel:+917721888623"
                       className="text-gray-600 hover:text-blue-500 transition text-sm sm:text-base"
                     >
                       +91 7721888623
@@ -235,9 +236,8 @@ function Contact() {
                   placeholder="abc xyz"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    error.name ? "border-red-500" : "border-gray-300"
-                  } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm sm:text-base`}
+                  className={`w-full px-4 py-3 rounded-lg border ${error.name ? "border-red-500" : "border-gray-300"
+                    } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm sm:text-base`}
                 />
                 {error.name && <p className="text-red-500 text-sm mt-1">{error.name}</p>}
               </motion.div>

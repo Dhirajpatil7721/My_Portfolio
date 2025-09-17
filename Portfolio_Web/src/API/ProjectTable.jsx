@@ -1,132 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import Projectadd from "./Projectadd";
-// import ProjectUpdate from "./ProjectUpdate"; // Import ProjectUpdate component
-
-// const ProjectTable = () => {
-//     const [projects, setProjects] = useState([]);
-//     const [showModal, setShowModal] = useState(false); // <-- Modal control for Add Project
-//     const [showUpdateModal, setShowUpdateModal] = useState(false); // <-- Modal control for Update Project
-//     const [currentProject, setCurrentProject] = useState(null); // <-- Current project for update
-
-//     const fetchProjects = () => {
-//         axios
-//             .get("http://localhost:5000/api/project")
-//             .then((response) => {
-//                 setProjects(response.data.data);
-//             })
-//             .catch((error) => {
-//                 console.error("Error fetching data:", error);
-//             });
-//     };
-
-//     useEffect(() => {
-//         fetchProjects();
-//     }, []);
-
-//     const handleDelete = (title) => {
-//         axios
-//             .delete(`http://localhost:5000/api/project/title/${title}`)
-//             .then((response) => {
-//                 console.log("Project deleted:", response.data);
-//                 // Refresh the project list by re-fetching data
-//                 fetchProjects();
-//             })
-//             .catch((error) => {
-//                 console.error("Error deleting project:", error);
-//             });
-//     };
-
-//     const handleUpdate = (project) => {
-//         setCurrentProject(project); // Set the project to be updated
-//         setShowUpdateModal(true); // Show the update modal
-//     };
-
-//     return (
-//         <div className="mt-20 px-4">
-//             <h2 className="text-2xl font-semibold text-center mb-6">Project List</h2>
-
-//             <button
-//                 onClick={() => window.location.reload()}
-//                 className="bg-green-600 text-white px-5 py-1 rounded-lg text-lg hover:bg-green-700 transition mb-2"
-//             >
-//                 🔄 Refresh
-//             </button>
-
-//             <button
-//                 onClick={() => setShowModal(true)}
-//                 className="bg-yellow-600 text-white px-5 py-1 rounded-lg text-lg hover:bg-gray-700 transition mb-2 ml-2"
-//             >
-//                 Add Project
-//             </button>
-
-//             {showModal && (
-//                 <Projectadd
-//                     onClose={() => setShowModal(false)} // pass close function
-//                     onProjectAdded={fetchProjects} // refresh table on new add
-//                 />
-//             )}
-
-//             {showUpdateModal && currentProject && (
-//                 <ProjectUpdate
-//                     project={currentProject}
-//                     onClose={() => setShowUpdateModal(false)} // pass close function
-//                     onProjectUpdated={fetchProjects} // refresh table after update
-//                 />
-//             )}
-
-//             {projects.length > 0 ? (
-//                 <table className="min-w-full table-auto border-collapse border border-gray-300 mt-4">
-//                     <thead>
-//                         <tr>
-//                             <th className="px-4 py-2 border">Title</th>
-//                             <th className="px-4 py-2 border">Icon</th>
-//                             <th className="px-4 py-2 border">Description</th>
-//                             <th className="px-4 py-2 border">GitHub URL</th>
-//                             <th className="px-4 py-2 border">Live Demo URL</th>
-//                             <th className="px-4 py-2 border">Actions</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody>
-//                         {projects.map((pro, index) => (
-//                             <tr key={index}>
-//                                 <td className="px-4 py-2 border">{pro.title}</td>
-//                                 <td className="px-4 py-2 border">{pro.ico}</td>
-//                                 <td className="px-4 py-2 border">{pro.description}</td>
-//                                 <td className="px-4 py-2 border">
-//                                     <a href={pro.git} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">GitHub</a>
-//                                 </td>
-//                                 <td className="px-4 py-2 border">
-//                                     <a href={pro.host} className="text-green-600 underline" target="_blank" rel="noopener noreferrer">Live Demo</a>
-//                                 </td>
-//                                 <td className="px-4 py-2 border">
-//                                     <div className="flex justify-center space-x-2">
-//                                         <button
-//                                             onClick={() => handleUpdate(pro)} // Trigger update modal
-//                                             className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-//                                         >
-//                                             Update
-//                                         </button>
-//                                         <button 
-//                                             className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-//                                             onClick={() => handleDelete(pro.title)} // Pass the title to delete function
-//                                         >
-//                                             Delete
-//                                         </button>
-//                                     </div>
-//                                 </td>
-//                             </tr>
-//                         ))}
-//                     </tbody>
-//                 </table>
-//             ) : (
-//                 <p className="text-center mt-4">No projects available.</p>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default ProjectTable;
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Projectadd from "./Projectadd";
@@ -140,11 +11,11 @@ const ProjectTable = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [currentProject, setCurrentProject] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
     const fetchProjects = () => {
         setLoading(true);
         axios
-            .get("http://localhost:5000/api/project")
+            .get(`${API_BASE_URL}/project`)
             .then((response) => {
                 setProjects(response.data.data);
                 setLoading(false);
@@ -162,7 +33,7 @@ const ProjectTable = () => {
     const handleDelete = (title) => {
         if (window.confirm("Are you sure you want to delete this project?")) {
             axios
-                .delete(`http://localhost:5000/api/project/title/${title}`)
+                .delete(`${API_BASE_URL}/project/title/${title}`)
                 .then((response) => {
                     fetchProjects();
                     toast.warn("Message deleted successfully!");
@@ -180,17 +51,17 @@ const ProjectTable = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 mt-16">
-             <ToastContainer 
-        position="top-right" 
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -282,7 +153,7 @@ const ProjectTable = () => {
                                                     {pro.git && (
                                                         <a href={pro.git} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center">
                                                             <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                                                             </svg>
                                                             GitHub
                                                         </a>
@@ -290,7 +161,7 @@ const ProjectTable = () => {
                                                     {pro.host && (
                                                         <a href={pro.host} target="_blank" rel="noopener noreferrer" className="text-sm text-green-600 hover:text-green-800 hover:underline flex items-center">
                                                             <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                                                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1 16.057v-3.057h2.994c-.059 1.143-.212 2.24-.457 3.057h-2.537zm1.5-5.057h-1.5v-1.5h1.5v1.5zm-1.5-3h-1.5v-1.5h1.5v1.5zm3 0h-1.5v-1.5h1.5v1.5zm-6-3h-1.5v-1.5h1.5v1.5zm3 0h-1.5v-1.5h1.5v1.5zm-6 6h-1.5v-1.5h1.5v1.5zm9.464 5.535l-1.414-1.414 2.828-2.828 1.414 1.414-2.828 2.828zm-12.728 0l-2.828-2.828 1.414-1.414 2.828 2.828-1.414 1.414zm9.264-12.728l1.414-1.414 2.828 2.828-1.414 1.414-2.828-2.828zm-12.728 0l-1.414-1.414 2.828-2.828 1.414 1.414-2.828 2.828z"/>
+                                                                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1 16.057v-3.057h2.994c-.059 1.143-.212 2.24-.457 3.057h-2.537zm1.5-5.057h-1.5v-1.5h1.5v1.5zm-1.5-3h-1.5v-1.5h1.5v1.5zm3 0h-1.5v-1.5h1.5v1.5zm-6-3h-1.5v-1.5h1.5v1.5zm3 0h-1.5v-1.5h1.5v1.5zm-6 6h-1.5v-1.5h1.5v1.5zm9.464 5.535l-1.414-1.414 2.828-2.828 1.414 1.414-2.828 2.828zm-12.728 0l-2.828-2.828 1.414-1.414 2.828 2.828-1.414 1.414zm9.264-12.728l1.414-1.414 2.828 2.828-1.414 1.414-2.828-2.828zm-12.728 0l-1.414-1.414 2.828-2.828 1.414 1.414-2.828 2.828z" />
                                                             </svg>
                                                             Live Demo
                                                         </a>

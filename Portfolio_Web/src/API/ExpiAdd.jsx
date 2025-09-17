@@ -13,6 +13,7 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
         description: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,7 +24,7 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const response = await axios.post("http://localhost:5000/api/experience", newExperience);
+            const response = await axios.post(`${API_BASE_URL}experience`, newExperience);
             onAddExperience(response.data);
             onClose();
             // Reset form after successful submission
@@ -47,7 +48,7 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50 transition-opacity duration-300">
-           
+
             <div className="relative w-full max-w-md p-4">
                 {/* Modal content */}
                 <div className="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all duration-300 sm:my-8 sm:w-full sm:max-w-lg">
