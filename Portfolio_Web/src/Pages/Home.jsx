@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import video from '../assets/Bgvideo/bgvideo2.mp4';
-import Dhiraj_Patil from '../../public/DHIRAJ_PATIL_FullStack.pdf';
+import Dhiraj_Patil from '../../public/Dhiraj_Patil.pdf';
 import { Download, ArrowRight } from "lucide-react";
 import dhiraj from '../assets/dhiraj.jpg';
 import html from '../assets/html.png';
