@@ -41,7 +41,7 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
         try {
             const encodedCompany = encodeURIComponent(existingData.company);
             const res = await axios.put(
-                `${API_BASE_URL}/company/${encodedCompany}`,
+                `${API_BASE_URL}/experience/company/${encodedCompany}`,
                 updatedExperience
             );
             onUpdate(res.data.data);

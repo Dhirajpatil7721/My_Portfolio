@@ -24,7 +24,7 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const response = await axios.post(`${API_BASE_URL}experience`, newExperience);
+            const response = await axios.post(`${API_BASE_URL}/experience`, newExperience);
             onAddExperience(response.data);
             onClose();
             // Reset form after successful submission
