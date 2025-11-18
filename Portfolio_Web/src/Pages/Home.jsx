@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import video from '../assets/Bgvideo/bgvideo2.mp4';
-import Dhiraj_Patil from '../../public/Dhiraj_MERN.pdf';
+import Dhiraj_Patil from '../../public/Dhiraj_Patil.pdf';
 import { Download, ArrowRight } from "lucide-react";
 import dhiraj from '../assets/dhiraj.jpg';
 import html from '../assets/html.png';
@@ -15,7 +15,7 @@ import github from '../assets/Github.png';
 import vs from '../assets/vs.png';
 
 export default function Home() {
-  
+
   return (
     <div className="w-full min-h-screen flex flex-col bg-white mt-16">
       {/* Hero Section with Video Background */}
@@ -29,7 +29,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-white/20"></div>
 
         {/* Hero Content */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -50,7 +50,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-lg sm:text-xl md:text-2xl font-medium text-white"
             >
-              Full-Stack Developer & Problem Solver
+              MERN Stack Devloper | Full-Stack Developer
             </motion.h2>
             <motion.p
               initial={{ y: -20, opacity: 0 }}
@@ -199,7 +199,7 @@ export default function Home() {
         className="w-full py-8 sm:py-12 px-4 bg-white"
       >
         <hr className="w-[90%] sm:w-[80%] mx-auto border-t border-slate-200 mb-6 sm:mb-8" />
-        
+
         <div className="flex flex-wrap justify-center gap-4 sm:gap-0 sm:justify-evenly">
           {[html, css, javascript, react, bootstrap].map((img, index) => (
             <motion.img
@@ -211,7 +211,7 @@ export default function Home() {
             />
           ))}
         </div>
-        
+
         <div className="flex flex-wrap justify-center gap-4 sm:gap-0 sm:justify-evenly mt-6 sm:mt-10 mb-6 sm:mb-10">
           {[tailwind, java, mysql, github, vs].map((img, index) => (
             <motion.img

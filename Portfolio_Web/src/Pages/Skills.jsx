@@ -16,13 +16,13 @@ export default function Skills() {
     {
       category: "Programming Languages",
       icon: <FaCode className="text-4xl md:text-5xl text-blue-600" />, 
-      skills: ["Java", "JavaScript", "React.js", "Next.js", "HTML", "CSS", "Bootstrap", "Tailwind"],
+      skills: ["Java", "Node.js","JavaScript", "React.js", "Next.js", "HTML", "CSS", "Bootstrap", "Tailwind"],
       description: "Proficient in modern programming languages, ensuring clean and efficient code.",
     },
     {
       category: "Databases & Backend",
       icon: <FaDatabase className="text-4xl md:text-5xl text-red-600" />, 
-      skills: ["SQL", "MongoDB", "SQL Server", "Firebase", "PostgreSQL"],
+      skills: ["SQL", "MongoDB", "SQL Server"],
       description: "Expertise in relational and NoSQL databases, optimized for performance and security.",
     },
     {
@@ -34,7 +34,7 @@ export default function Skills() {
     {
       category: "Technologies & Tools",
       icon: <FaTools className="text-4xl md:text-5xl text-green-600" />, 
-      skills: ["AWS", "Docker", "Git", "CI/CD", "Kubernetes"],
+      skills: ["AWS", "Docker", "Git", "GoDaddy","Visual Studio"],
       description: "Familiar with cloud computing, DevOps tools, and version control for scalable applications.",
     },
   ];
