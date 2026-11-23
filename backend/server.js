@@ -33,18 +33,22 @@ const app = express();
 const allowedOrigins = [
   "https://dhirajpatilv.vercel.app", // Vercel frontend
   "http://localhost:5173",           // Local development frontend
+  "http://localhost:3000",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
+      // allow requests with no origin (like Postman or server-to-server proxies)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
-        return callback(new Error(msg), false);
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
       }
-      return callback(null, true);
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
     },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
