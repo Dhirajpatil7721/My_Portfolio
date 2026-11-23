@@ -128,7 +128,8 @@ router.delete("/experience/company/:company", async (req, res) => {
 // CREATE Project
 router.post("/project", async (req, res) => {
   try {
-    const project = new Project(req.body);
+    const { ico, title, description, git, host, android, ios } = req.body;
+    const project = new Project({ ico, title, description, git, host, android, ios });
     await project.save();
     res.status(201).json({ success: true, data: project });
   } catch (err) {
@@ -146,6 +147,18 @@ router.get("/project", async (req, res) => {
   }
 });
 
+// READ Single Project by ID
+router.get("/project/:id", async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+    res.json({ success: true, data: project });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // UPDATE Project by Title
 router.put("/project/title/:title", async (req, res) => {
@@ -166,12 +179,44 @@ router.put("/project/title/:title", async (req, res) => {
   }
 });
 
+// UPDATE Project by ID
+router.put("/project/:id", async (req, res) => {
+  try {
+    const updated = await Project.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // Delete Project by Title
 router.delete("/project/title/:title", async (req, res) => {
   try {
     const deleted = await Project.findOneAndDelete({ title: req.params.title });  // Find and delete by title
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.json({ success: true, message: "Project deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Delete Project by ID
+router.delete("/project/:id", async (req, res) => {
+  try {
+    const deleted = await Project.findByIdAndDelete(req.params.id);
 
     if (!deleted) {
       return res.status(404).json({ success: false, message: "Project not found" });

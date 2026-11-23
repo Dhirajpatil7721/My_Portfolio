@@ -171,7 +171,9 @@ import {
   FaHeading,
   FaFileAlt,
   FaLink,
-  FaGlobe
+  FaGlobe,
+  FaAndroid,
+  FaApple
 } from 'react-icons/fa';
 
 function Projectadd({ onClose, onProjectAdded }) {
@@ -181,6 +183,8 @@ function Projectadd({ onClose, onProjectAdded }) {
         description: "",
         git: "",
         host: "",
+        android: "",
+        ios: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
@@ -207,6 +211,12 @@ function Projectadd({ onClose, onProjectAdded }) {
         if (formData.host && !isValidUrl(formData.host)) {
             newErrors.host = 'Please enter a valid URL';
         }
+        if (formData.android && !isValidUrl(formData.android)) {
+            newErrors.android = 'Please enter a valid URL';
+        }
+        if (formData.ios && !isValidUrl(formData.ios)) {
+            newErrors.ios = 'Please enter a valid URL';
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -231,7 +241,7 @@ function Projectadd({ onClose, onProjectAdded }) {
             .post(`${API_BASE_URL}/project`, formData)
             .then((response) => {
                 console.log("Project submitted:", response.data);
-                setFormData({ ico: "", title: "", description: "", git: "", host: "" });
+                setFormData({ ico: "", title: "", description: "", git: "", host: "", android: "", ios: "" });
                 setIsSubmitting(false);
                 if (onProjectAdded) onProjectAdded();
                 onClose();
@@ -322,6 +332,24 @@ function Projectadd({ onClose, onProjectAdded }) {
             type: 'url',
             required: false
         },
+        { 
+            name: 'android', 
+            label: 'Android App URL', 
+            icon: FaAndroid, 
+            color: 'emerald', 
+            placeholder: 'https://play.google.com/store/apps/...',
+            type: 'url',
+            required: false
+        },
+        { 
+            name: 'ios', 
+            label: 'iOS App URL', 
+            icon: FaApple, 
+            color: 'slate', 
+            placeholder: 'https://apps.apple.com/app/...',
+            type: 'url',
+            required: false
+        },
     ];
 
     const getColorClasses = (color) => {
@@ -349,6 +377,18 @@ function Projectadd({ onClose, onProjectAdded }) {
                 icon: 'text-green-600',
                 button: 'from-green-600 to-emerald-600',
                 bg: 'bg-green-50'
+            },
+            emerald: {
+                focus: 'focus:border-emerald-500 focus:ring-emerald-200',
+                icon: 'text-emerald-600',
+                button: 'from-emerald-600 to-teal-600',
+                bg: 'bg-emerald-50'
+            },
+            slate: {
+                focus: 'focus:border-slate-500 focus:ring-slate-200',
+                icon: 'text-slate-700',
+                button: 'from-slate-700 to-slate-900',
+                bg: 'bg-slate-50'
             },
         };
         return colors[color] || colors.orange;

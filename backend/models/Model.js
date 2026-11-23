@@ -22,6 +22,8 @@ const projectSchema = new mongoose.Schema({
   description: { type: String },
   git: { type: String },
   host: { type: String },
+  android: { type: String },
+  ios: { type: String },
 });
 
 const Contact = mongoose.model("Contact", contactSchema);

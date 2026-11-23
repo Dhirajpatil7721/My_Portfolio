@@ -161,7 +161,9 @@ import {
   FaGlobe,
   FaEdit,
   FaExclamationCircle,
-  FaCheckCircle
+  FaCheckCircle,
+  FaAndroid,
+  FaApple
 } from "react-icons/fa";
 
 const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
@@ -171,6 +173,8 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
         ico: "",
         git: "",
         host: "",
+        android: "",
+        ios: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
@@ -184,6 +188,8 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                 ico: project.ico || "",
                 git: project.git || "",
                 host: project.host || "",
+                android: project.android || "",
+                ios: project.ios || "",
             });
             setErrors({});
         }
@@ -211,6 +217,12 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
         }
         if (updatedProject.host && !isValidUrl(updatedProject.host)) {
             newErrors.host = 'Please enter a valid URL';
+        }
+        if (updatedProject.android && !isValidUrl(updatedProject.android)) {
+            newErrors.android = 'Please enter a valid URL';
+        }
+        if (updatedProject.ios && !isValidUrl(updatedProject.ios)) {
+            newErrors.ios = 'Please enter a valid URL';
         }
 
         setErrors(newErrors);
@@ -326,6 +338,24 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
             type: 'url',
             required: false
         },
+        { 
+            name: 'android', 
+            label: 'Android App URL', 
+            icon: FaAndroid, 
+            color: 'emerald', 
+            placeholder: 'https://play.google.com/store/apps/...',
+            type: 'url',
+            required: false
+        },
+        { 
+            name: 'ios', 
+            label: 'iOS App URL', 
+            icon: FaApple, 
+            color: 'slate', 
+            placeholder: 'https://apps.apple.com/app/...',
+            type: 'url',
+            required: false
+        },
     ];
 
     const getColorClasses = (color) => {
@@ -353,6 +383,18 @@ const ProjectUpdate = ({ project, onClose, onProjectUpdated }) => {
                 icon: 'text-green-600',
                 button: 'from-green-600 to-emerald-600',
                 bg: 'bg-green-50'
+            },
+            emerald: {
+                focus: 'focus:border-emerald-500 focus:ring-emerald-200',
+                icon: 'text-emerald-600',
+                button: 'from-emerald-600 to-teal-600',
+                bg: 'bg-emerald-50'
+            },
+            slate: {
+                focus: 'focus:border-slate-500 focus:ring-slate-200',
+                icon: 'text-slate-700',
+                button: 'from-slate-700 to-slate-900',
+                bg: 'bg-slate-50'
             },
         };
         return colors[color] || colors.blue;

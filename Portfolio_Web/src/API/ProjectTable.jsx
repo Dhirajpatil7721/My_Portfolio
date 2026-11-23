@@ -241,7 +241,10 @@ import {
   FaSyncAlt, 
   FaPlus,
   FaCode,
-  FaFolderOpen
+  FaFolderOpen,
+  FaAndroid,
+  FaApple,
+  FaMobileAlt
 } from "react-icons/fa";
 
 const ProjectTable = () => {
@@ -390,7 +393,7 @@ const ProjectTable = () => {
                         </p>
                         
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 max-w-3xl mx-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 max-w-4xl mx-auto">
                             <div className="bg-white p-4 rounded-lg shadow-md border border-gray-100">
                                 <div className="flex items-center justify-between">
                                     <div>
@@ -427,6 +430,20 @@ const ProjectTable = () => {
                                     </div>
                                     <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                                         <FaExternalLinkAlt className="text-green-600" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-4 rounded-lg shadow-md border border-gray-100">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-gray-500 text-sm">Mobile Apps</p>
+                                        <p className="text-2xl font-bold text-gray-800">
+                                            {projects.filter(p => p.android || p.ios).length}
+                                        </p>
+                                    </div>
+                                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <FaMobileAlt className="text-purple-600" />
                                     </div>
                                 </div>
                             </div>
@@ -554,6 +571,31 @@ const ProjectTable = () => {
                                                                 <FaExternalLinkAlt className="mr-2 text-green-600 group-hover:scale-110 transition-transform" />
                                                                 <span>Live Demo</span>
                                                             </a>
+                                                        )}
+                                                        {pro.android && (
+                                                            <a 
+                                                                href={pro.android} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="text-sm text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center group"
+                                                            >
+                                                                <FaAndroid className="mr-2 text-emerald-600 group-hover:scale-110 transition-transform" />
+                                                                <span>Android</span>
+                                                            </a>
+                                                        )}
+                                                        {pro.ios && (
+                                                            <a 
+                                                                href={pro.ios} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="text-sm text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center group"
+                                                            >
+                                                                <FaApple className="mr-2 text-slate-800 group-hover:scale-110 transition-transform" />
+                                                                <span>iOS</span>
+                                                            </a>
+                                                        )}
+                                                        {!pro.git && !pro.host && !pro.android && !pro.ios && (
+                                                            <span className="text-xs text-gray-400 italic">No links</span>
                                                         )}
                                                     </div>
                                                 </td>
