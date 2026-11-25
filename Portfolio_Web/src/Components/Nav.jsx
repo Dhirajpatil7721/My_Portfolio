@@ -60,7 +60,8 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import logo from "../assets/logo1.png";
+import logo1 from "../assets/logo1.png";
+import logo2 from "../assets/logo2.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,11 +69,15 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isHome = location.pathname === "/";
+  const isTransparent = isHome && !scrolled;
+
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -82,10 +87,37 @@ export default function Navbar() {
     setIsOpen(false);
   }, [location]);
 
+  // Close mobile menu on Escape or when resizing to desktop width
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setIsOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Lock body scroll while mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   const navItems = [
     { path: "/", label: "Home" },
     { path: "/about", label: "About Me" },
-    { path: "/skills", label: "Skills" },
     { path: "/projects", label: "Projects" },
     { path: "/experience", label: "Experience" },
     { path: "/certifications", label: "Certifications" },
@@ -125,161 +157,199 @@ export default function Navbar() {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? "bg-white/95 backdrop-blur-md shadow-lg py-3" 
-          : "bg-white shadow-md py-4"
-      }`}
-    >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          {/* Logo - Made Bigger */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="cursor-pointer relative group"
-            onClick={() => handleNavClick('/')}
-          >
-            <img 
-              className="w-28 sm:w-32 h-auto transition-all duration-300 filter drop-shadow-md group-hover:drop-shadow-lg" 
-              src={logo} 
-              alt="Logo" 
-            />
-            {/* Glow effect on hover */}
-            <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-          </motion.div>
+    <>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+          isTransparent
+            ? "bg-transparent py-2.5 sm:py-3"
+            : scrolled
+              ? "bg-white/95 backdrop-blur-md shadow-lg py-2"
+              : "bg-white shadow-md py-2.5"
+        }`}
+      >
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 box-border">
+          <div className="flex justify-between items-center gap-2 min-w-0">
+            {/* Logo */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="cursor-pointer relative group shrink-0 w-24 sm:w-28 md:w-32 h-9 sm:h-10 md:h-11 flex items-center"
+              onClick={() => handleNavClick('/')}
+            >
+              <img 
+                className={`w-full h-auto transition-all duration-300 filter drop-shadow-md group-hover:drop-shadow-lg pointer-events-none ${
+                  isTransparent ? "" : "scale-[1.02] -translate-x-[1.5px] -translate-y-[1px]"
+                }`}
+                src={isTransparent ? logo2 : logo1} 
+                alt="Logo" 
+              />
+              {/* Glow effect on hover */}
+              <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+            </motion.div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
-            {navItems.map((item) => (
-              <motion.div
-                key={item.path}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative"
-              >
-                <Link
-                  to={item.path}
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                  }}
-                  className={`flex items-center px-4 py-2.5 rounded-lg text-sm lg:text-base font-medium transition-all duration-300 ${
-                    location.pathname === item.path
-                      ? "text-blue-600 bg-blue-50 shadow-sm"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                  }`}
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-0.5 lg:gap-1.5 xl:gap-2">
+              {navItems.map((item) => (
+                <motion.div
+                  key={item.path}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative"
                 >
-                  {item.label}
-                </Link>
-                
-                {/* Active indicator */}
-                {location.pathname === item.path && (
+                  <Link
+                    to={item.path}
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                    }}
+                    className={`whitespace-nowrap flex items-center px-2 lg:px-3.5 py-1.5 rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ${
+                      isTransparent
+                        ? location.pathname === item.path
+                          ? "text-cyan-300"
+                          : "text-white hover:text-cyan-300"
+                        : location.pathname === item.path
+                          ? "text-blue-600"
+                          : "text-black hover:text-blue-600"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                  
+                  {/* Active indicator */}
+                  {location.pathname === item.path && (
+                    <motion.div
+                      layoutId="activeNav"
+                      className={`absolute -bottom-1 left-2 right-2 h-0.5 rounded-full ${
+                        isTransparent
+                          ? "bg-gradient-to-r from-cyan-400 to-white"
+                          : "bg-gradient-to-r from-blue-600 to-cyan-500"
+                      }`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
+              className="md:hidden shrink-0 relative w-10 h-10 flex items-center justify-center bg-transparent border-0 transition-opacity duration-300 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+              aria-expanded={isOpen}
+            >
+              <AnimatePresence mode="wait">
+                {isOpen ? (
                   <motion.div
-                    layoutId="activeNav"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X className={`w-5 h-5 ${isTransparent ? "text-white" : "text-slate-800"}`} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu className={`w-5 h-5 ${isTransparent ? "text-white" : "text-slate-800"}`} />
+                  </motion.div>
                 )}
-              </motion.div>
-            ))}
+              </AnimatePresence>
+            </motion.button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="md:hidden relative w-12 h-12 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 transition-all duration-300 shadow-md"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            <AnimatePresence mode="wait">
-              {isOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
+          {/* Mobile Navigation Menu */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                variants={mobileMenuVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className={`md:hidden absolute left-4 right-4 top-full mt-2 rounded-2xl shadow-2xl border overflow-hidden z-50 backdrop-blur-xl ${
+                  isTransparent
+                    ? "bg-slate-900/95 border-white/15"
+                    : "bg-white/95 border-slate-200"
+                }`}
+              >
+                <div className="py-2 max-h-[calc(100dvh-5.5rem)] overflow-y-auto">
+                  {navItems.map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <motion.div
+                        key={item.path}
+                        variants={mobileItemVariants}
+                        className="px-2 py-0.5"
+                      >
+                        <button
+                          onClick={() => handleNavClick(item.path)}
+                          className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 ${
+                            isTransparent
+                              ? isActive
+                                ? "bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-400/30 font-semibold"
+                                : "text-slate-200 hover:bg-white/10"
+                              : isActive
+                                ? "bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 border border-blue-200/60 font-semibold"
+                                : "text-slate-700 hover:bg-slate-100"
+                          }`}
+                        >
+                          <span className="text-sm sm:text-base">{item.label}</span>
+                          {isActive && (
+                            <span
+                              className={`w-2 h-2 rounded-full ${
+                                isTransparent ? "bg-cyan-400" : "bg-blue-600"
+                              }`}
+                            />
+                          )}
+                        </button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Mobile menu footer */}
+                <div
+                  className={`border-t p-3 ${
+                    isTransparent
+                      ? "border-white/10 bg-slate-950/60"
+                      : "border-slate-100 bg-slate-50"
+                  }`}
                 >
-                  <X className="w-6 h-6 text-blue-600" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu className="w-6 h-6 text-blue-600" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.button>
+                  <p className={`text-xs text-center ${isTransparent ? "text-slate-400" : "text-slate-500"}`}>
+                    © {new Date().getFullYear()} Dhiraj Patil
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+      </motion.nav>
 
-        {/* Mobile Navigation Menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="md:hidden absolute left-0 right-0 top-full mt-2 mx-4 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
-            >
-              <div className="py-2 max-h-[70vh] overflow-y-auto">
-                {navItems.map((item) => (
-                  <motion.div
-                    key={item.path}
-                    variants={mobileItemVariants}
-                    whileHover={{ x: 5 }}
-                    className="px-2"
-                  >
-                    <button
-                      onClick={() => handleNavClick(item.path)}
-                      className={`w-full text-left px-4 py-3.5 rounded-lg transition-all duration-300 ${
-                        location.pathname === item.path
-                          ? "bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 font-medium"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className="text-base font-medium">{item.label}</span>
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Mobile menu footer */}
-              <div className="border-t border-gray-100 p-4 bg-gradient-to-r from-gray-50 to-slate-50">
-                <p className="text-xs text-center text-gray-500">
-                  © {new Date().getFullYear()} Dhiraj Patil
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Background overlay for mobile menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm -z-10"
-              onClick={() => setIsOpen(false)}
-            />
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.nav>
+      {/* Background overlay for mobile menu (kept outside nav so fixed covers full viewport) */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            onClick={() => setIsOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

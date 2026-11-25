@@ -1,5 +1,9 @@
 const express = require("express");
 const { Contact, Experience, Project } = require("../models/Model"); // Assuming all models are exported from Model.js
+const {
+  calculateExperienceDuration,
+  calculateTotalExperience,
+} = require("../utils/experienceUtils");
 const router = express.Router();
 
 /* ------------------------- CONTACT ROUTES ------------------------- */
@@ -7,8 +11,14 @@ const router = express.Router();
 // POST: Submit Contact Form
 router.post("/contact", async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
-    const newContact = new Contact({ name, email, subject, message });
+    const { name, email, company, subject, message } = req.body;
+    const newContact = new Contact({
+      name,
+      email,
+      company: typeof company === "string" ? company.trim() : "",
+      subject,
+      message,
+    });
     await newContact.save();
     res.status(201).json({ success: true, message: "Message Sent Successfully" });
   } catch (error) {
@@ -42,10 +52,44 @@ router.delete("/contact/email/:email", async (req, res) => {
 
 /* ------------------------- EXPERIENCE ROUTES ------------------------- */
 
+const buildExperiencePayload = (body) => {
+  const {
+    company,
+    companyWebsite,
+    position,
+    startDate,
+    endDate,
+    exp,
+    description,
+  } = body;
+
+  const duration = calculateExperienceDuration(startDate, endDate);
+  if (duration && !duration.isValidOrder) {
+    return { error: "End date cannot be earlier than start date" };
+  }
+
+  return {
+    payload: {
+      company,
+      companyWebsite: typeof companyWebsite === "string" ? companyWebsite.trim() : "",
+      position,
+      startDate,
+      endDate,
+      exp: duration ? duration.formatted : exp,
+      totalMonths: duration ? duration.totalMonths : 0,
+      description,
+    },
+  };
+};
+
 // CREATE Experience
 router.post("/experience", async (req, res) => {
   try {
-    const exp = new Experience(req.body);
+    const { payload, error } = buildExperiencePayload(req.body);
+    if (error) {
+      return res.status(400).json({ success: false, message: error });
+    }
+    const exp = new Experience(payload);
     await exp.save();
     res.status(201).json({ success: true, data: exp });
   } catch (err) {
@@ -57,30 +101,34 @@ router.post("/experience", async (req, res) => {
 router.get("/experience", async (req, res) => {
   try {
     const experiences = await Experience.find();
-    res.json({ success: true, data: experiences });
+    const enrichedExperiences = experiences.map((doc) => {
+      const obj = doc.toObject();
+      const duration = calculateExperienceDuration(obj.startDate, obj.endDate);
+      if (duration && duration.isValidOrder) {
+        obj.exp = duration.formatted;
+        obj.totalMonths = duration.totalMonths;
+      }
+      return obj;
+    });
+    const totalExperience = calculateTotalExperience(enrichedExperiences);
+    res.json({ success: true, data: enrichedExperiences, totalExperience });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// UPDATE Experience
-// router.put("/experience/:id", async (req, res) => {
-//   try {
-//     const updated = await Experience.findByIdAndUpdate(req.params.id, req.body, { new: true });
-//     res.json({ success: true, data: updated });
-//   } catch (err) {
-//     res.status(500).json({ success: false, error: err.message });
-//   }
-// });
-
 // UPDATE Experience by Company Name
 router.put("/experience/company/:company", async (req, res) => {
   try {
-    // Find experience by company name and update it
+    const { payload, error } = buildExperiencePayload(req.body);
+    if (error) {
+      return res.status(400).json({ success: false, message: error });
+    }
+
     const updated = await Experience.findOneAndUpdate(
-      { company: req.params.company }, // Match by company name
-      req.body, // New data
-      { new: true } // Return the updated document
+      { company: req.params.company },
+      payload,
+      { new: true }
     );
 
     if (!updated) {
@@ -93,29 +141,52 @@ router.put("/experience/company/:company", async (req, res) => {
   }
 });
 
+// UPDATE Experience by ID
+router.put("/experience/:id", async (req, res) => {
+  try {
+    const { payload, error } = buildExperiencePayload(req.body);
+    if (error) {
+      return res.status(400).json({ success: false, message: error });
+    }
 
+    const updated = await Experience.findByIdAndUpdate(
+      req.params.id,
+      payload,
+      { new: true }
+    );
 
-// DELETE Experience
-// router.delete("/experience/:id", async (req, res) => {
-//   try {
-//     await Experience.findByIdAndDelete(req.params.id);
-//     res.json({ success: true, message: "Deleted successfully" });
-//   } catch (err) {
-//     res.status(500).json({ success: false, error: err.message });
-//   }
-// });
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Experience not found" });
+    }
 
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // DELETE Experience by Company Name
 router.delete("/experience/company/:company", async (req, res) => {
   try {
-    // Find experience by company name and delete it
     const deleted = await Experience.findOneAndDelete({ company: req.params.company });
 
     if (!deleted) {
       return res.status(404).json({ success: false, message: "Experience not found" });
     }
 
+    res.json({ success: true, message: "Deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE Experience by ID
+router.delete("/experience/:id", async (req, res) => {
+  try {
+    const deleted = await Experience.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Experience not found" });
+    }
     res.json({ success: true, message: "Deleted successfully" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

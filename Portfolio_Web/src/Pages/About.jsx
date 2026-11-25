@@ -131,18 +131,19 @@
 // }
 
 
-import { FaLaptopCode, FaTools, FaLightbulb, FaProjectDiagram, FaUserFriends, FaRocket, FaGraduationCap, FaStar, FaCalendarAlt, FaUniversity } from "react-icons/fa";
+import { FaGraduationCap, FaStar, FaCalendarAlt, FaUniversity } from "react-icons/fa";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Download, ArrowRight, Award, BookOpen, Code, Users, Target, Zap, Heart, Coffee } from "lucide-react";
+import { useTotalExperience } from "../hooks/useTotalExperience";
+import SkillCards from "../Components/SkillCards";
 
 export default function AboutMe() {
+  const totalExperienceText = useTotalExperience();
   const refEdu = useRef(null);
-  const refFeatures = useRef(null);
   const refTitle = useRef(null);
 
   const isInViewEdu = useInView(refEdu, { triggerOnce: false, margin: "-100px" });
-  const isInViewFeatures = useInView(refFeatures, { triggerOnce: false, margin: "-100px" });
   const isInViewTitle = useInView(refTitle, { triggerOnce: false, margin: "-100px" });
 
   const edus = [
@@ -162,75 +163,8 @@ export default function AboutMe() {
     }
   ];
 
-  const features = [
-    { 
-      icon: FaLaptopCode, 
-      title: "Full-Stack Development", 
-      color: "from-blue-500 to-cyan-500", 
-      desc: "Proficient in both frontend & backend development, creating seamless and responsive user experiences.",
-      bgColor: "bg-blue-50"
-    },
-    { 
-      icon: FaTools, 
-      title: "Problem-Solving", 
-      color: "from-green-500 to-emerald-500", 
-      desc: "Passionate about tackling complex challenges, optimizing performance, and writing clean, efficient code.",
-      bgColor: "bg-green-50"
-    },
-    { 
-      icon: FaLightbulb, 
-      title: "Continuous Learning", 
-      color: "from-yellow-500 to-amber-500", 
-      desc: "Always eager to learn new technologies, frameworks, and best practices to stay ahead in the industry.",
-      bgColor: "bg-yellow-50"
-    },
-    { 
-      icon: FaProjectDiagram, 
-      title: "Project Management", 
-      color: "from-purple-500 to-pink-500", 
-      desc: "Experienced in handling end-to-end project development, from planning to deployment.",
-      bgColor: "bg-purple-50"
-    },
-    { 
-      icon: FaUserFriends, 
-      title: "Team Collaboration", 
-      color: "from-red-500 to-rose-500", 
-      desc: "Strong communication and teamwork skills, ensuring smooth collaboration in development projects.",
-      bgColor: "bg-red-50"
-    },
-    { 
-      icon: FaRocket, 
-      title: "Innovation & Growth", 
-      color: "from-teal-500 to-cyan-500", 
-      desc: "Passionate about building impactful solutions that drive growth and innovation in the tech industry.",
-      bgColor: "bg-teal-50"
-    }
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
   return (
-    <section id="about" className="bg-gradient-to-b from-white to-slate-50 text-gray-900 py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section id="about" className="bg-gradient-to-b from-white to-slate-50 text-gray-900 pt-16 pb-12 sm:pt-[76px] sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         {/* Title with enhanced styling */}
         <motion.div
@@ -238,9 +172,9 @@ export default function AboutMe() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInViewTitle ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.7 }}
-          className="relative mb-8 text-center"
+          className="relative mb-6 text-center"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3">
             <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
               About Me
             </span>
@@ -249,7 +183,7 @@ export default function AboutMe() {
           {/* Animated underline */}
           <motion.div
             initial={{ width: 0 }}
-            animate={isInViewTitle ? { width: "100px" } : { width: 0 }}
+            animate={isInViewTitle ? { width: "80px" } : { width: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
             className="h-1 bg-gradient-to-r from-cyan-400 to-purple-400 mx-auto rounded-full"
           />
@@ -272,27 +206,45 @@ export default function AboutMe() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInViewTitle ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative max-w-4xl mx-auto px-4 mb-16"
+          className="relative max-w-4xl mx-auto px-4 mb-12"
         >
           <div className="relative">
             {/* Quote marks */}
-            <span className="absolute -top-4 -left-2 text-6xl text-cyan-200/30 font-serif">"</span>
-            <span className="absolute -bottom-12 -right-2 text-6xl text-purple-200/30 font-serif">"</span>
+            <span className="absolute -top-4 -left-2 text-5xl text-cyan-200/30 font-serif">"</span>
+            <span className="absolute -bottom-10 -right-2 text-5xl text-purple-200/30 font-serif">"</span>
             
-            <p className="text-base sm:text-lg md:text-xl leading-relaxed text-slate-700">
-              I am <span className="text-cyan-600 font-semibold relative group">
-                Dhiraj Patil
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
-              </span>, a passionate <span className="text-blue-600 font-semibold relative group">
-                MERN Stack Developer
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 group-hover:w-full transition-all duration-300"></span>
-              </span> dedicated to exploring
-              new technologies and building impactful applications. With a strong foundation in <span className="text-emerald-600 font-semibold relative group">
-                React.js, Express.js, Node.js, MongoDB and Web Development
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-emerald-400 group-hover:w-full transition-all duration-300"></span>
-              </span>, I thrive on solving challenges and crafting efficient, scalable, and user-friendly solutions.
-              My goal is to create high-performance applications that enhance user experiences and drive innovation.
-            </p>
+            <div className="space-y-3 text-sm sm:text-base leading-relaxed text-slate-700">
+              <p>
+                I&apos;m a passionate <span className="text-cyan-600 font-semibold relative group">
+                  Full Stack & Mobile App Developer
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </span> with {totalExperienceText} of professional experience building scalable web applications, cross-platform mobile applications for Android and iOS, and robust backend systems.
+              </p>
+
+              <p>
+                My expertise includes <span className="text-blue-600 font-semibold relative group">
+                  MERN Stack Development (MongoDB, Express.js, React.js, Node.js)
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-blue-400 group-hover:w-full transition-all duration-300"></span>
+                </span> and <span className="text-blue-600 font-semibold relative group">
+                  React Native
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-blue-400 group-hover:w-full transition-all duration-300"></span>
+                </span>, enabling me to develop complete end-to-end solutions, from responsive user interfaces to scalable backend architectures and RESTful APIs.
+              </p>
+
+              <p>
+                I have hands-on experience developing <span className="text-slate-800 font-semibold relative group">
+                  real-time GPS tracking systems, employee management platforms, subscription-based applications, payment gateway integrations, and e-commerce solutions
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </span>. I also specialize in <span className="text-emerald-600 font-semibold relative group">
+                  AWS Cloud Deployment, Docker, CI/CD Pipelines, Git, and Production Server Management
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-emerald-400 group-hover:w-full transition-all duration-300"></span>
+                </span>.
+              </p>
+
+              <p>
+                I&apos;m passionate about exploring emerging technologies, optimizing application performance, solving complex technical challenges, and transforming ideas into reliable, production-ready digital products.
+              </p>
+            </div>
           </div>
           
           {/* Decorative line */}
@@ -300,7 +252,7 @@ export default function AboutMe() {
             initial={{ scaleX: 0 }}
             animate={isInViewTitle ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="w-24 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent mx-auto mt-6"
+            className="w-20 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent mx-auto mt-5"
           />
         </motion.div>
 
@@ -310,7 +262,7 @@ export default function AboutMe() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl sm:text-3xl font-bold text-center mb-10"
+            className="text-lg sm:text-xl font-bold text-center mb-8"
           >
             <span className="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
               Education
@@ -359,7 +311,7 @@ export default function AboutMe() {
                   </div>
 
                   {/* Degree and University */}
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">
                     {edu.degree}
                   </h3>
                   
@@ -409,71 +361,23 @@ export default function AboutMe() {
           </div>
         </div>
 
-        {/* Features Section */}
-        <div ref={refFeatures}>
-          <motion.h3
+        {/* Skills Section */}
+        <div className="pt-2">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl sm:text-3xl font-bold text-center mb-10"
+            className="text-center mb-6"
           >
-            <span className="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-              What I Bring to the Table
-            </span>
-          </motion.h3>
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInViewFeatures ? "visible" : "hidden"}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-          >
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} rounded-2xl blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
-                
-                <div className="relative h-full bg-white rounded-2xl p-6 shadow-xl border border-slate-200
-                              hover:shadow-2xl transition-all duration-500 overflow-hidden">
-                  
-                  {/* Background pattern */}
-                  <div className={`absolute top-0 right-0 w-32 h-32 ${feature.bgColor} rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity duration-500`}></div>
-                  
-                  {/* Icon with gradient */}
-                  <div className="relative z-10 mb-4">
-                    <div className={`inline-block p-4 bg-gradient-to-r ${feature.color} rounded-2xl text-white shadow-lg
-                                    group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                      <feature.icon className="w-6 h-6" />
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="relative z-10 text-xl font-bold text-slate-800 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-600 transition-all duration-300">
-                    {feature.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="relative z-10 text-slate-600 text-sm leading-relaxed">
-                    {feature.desc}
-                  </p>
-
-                  {/* Decorative elements */}
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  {/* Floating dots */}
-                  <div className="absolute -bottom-2 -right-2 w-12 h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute bottom-0 right-0 w-2 h-2 bg-blue-400 rounded-full"></div>
-                    <div className="absolute bottom-3 right-3 w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                    <div className="absolute bottom-6 right-6 w-1 h-1 bg-purple-400 rounded-full"></div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <h3 className="text-lg sm:text-xl font-bold">
+              <span className="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                My Skills
+              </span>
+            </h3>
+            <div className="h-1 w-16 bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 mx-auto mt-2 rounded-full" />
           </motion.div>
+
+          <SkillCards />
         </div>
       </div>
     </section>

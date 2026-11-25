@@ -299,8 +299,15 @@ import {
     FaBuilding,
     FaUserTie,
     FaClock,
-    FaFileAlt
+    FaFileAlt,
+    FaExternalLinkAlt
 } from "react-icons/fa";
+import {
+    calculateDuration,
+    calculateTotalExperience,
+    formatDisplayDate,
+    normalizeWebsiteUrl
+} from "../utils/experienceUtils";
 
 const ExpiTabe = () => {
     const navigate = useNavigate();
@@ -369,6 +376,8 @@ const ExpiTabe = () => {
         exp.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         exp.position?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const totalExperience = calculateTotalExperience(experienceData);
 
     // Animation variants
     const containerVariants = {
@@ -481,9 +490,17 @@ const ExpiTabe = () => {
                 >
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                Work Experience
-                            </h2>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                    Work Experience
+                                </h2>
+                                {totalExperience.totalMonths > 0 && (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                        <FaClock className="text-blue-600" />
+                                        Total: {totalExperience.formatted}
+                                    </span>
+                                )}
+                            </div>
                             <p className="text-gray-500 mt-1">Manage your professional journey</p>
                         </div>
 
@@ -559,11 +576,24 @@ const ExpiTabe = () => {
                                             >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                                                             <FaBuilding className="text-blue-600 text-sm" />
                                                         </div>
-                                                        <div className="text-sm font-semibold text-gray-900">
-                                                            {exp.company}
+                                                        <div>
+                                                            <div className="text-sm font-semibold text-gray-900">
+                                                                {exp.company}
+                                                            </div>
+                                                            {normalizeWebsiteUrl(exp.companyWebsite) && (
+                                                                <a
+                                                                    href={normalizeWebsiteUrl(exp.companyWebsite)}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline mt-0.5"
+                                                                >
+                                                                    <span>Website</span>
+                                                                    <FaExternalLinkAlt className="text-[10px]" />
+                                                                </a>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -580,13 +610,13 @@ const ExpiTabe = () => {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center text-sm text-gray-600">
                                                         <FaCalendarAlt className="text-gray-400 mr-2 text-xs" />
-                                                        {exp.startDate} - {exp.endDate}
+                                                        {formatDisplayDate(exp.startDate)} - {formatDisplayDate(exp.endDate)}
                                                     </div>
                                                 </td>
 
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200">
-                                                        {exp.exp}
+                                                        {calculateDuration(exp.startDate, exp.endDate)?.formatted || exp.exp}
                                                     </span>
                                                 </td>
 

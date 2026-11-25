@@ -384,7 +384,7 @@ const ProjectTable = () => {
                             <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
                                 <FaProjectDiagram className="text-white text-xl" />
                             </div>
-                            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent sm:text-4xl">
+                            <h2 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
                                 Project Portfolio
                             </h2>
                         </div>

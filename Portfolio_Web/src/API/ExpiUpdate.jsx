@@ -157,11 +157,12 @@
 
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FaBuilding, 
+  FaGlobe,
   FaUserTie, 
   FaCalendarAlt, 
   FaClock, 
@@ -172,34 +173,71 @@ import {
   FaExclamationCircle,
   FaCheckCircle
 } from "react-icons/fa";
+import {
+  MONTH_OPTIONS,
+  getYearOptions,
+  parseMonthYear,
+  formatMonthYear,
+  calculateDuration,
+} from "../utils/experienceUtils";
 
 const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
-    const [updatedExperience, setUpdatedExperience] = useState({ ...existingData });
+    const currentYear = String(new Date().getFullYear());
+    const currentMonth = String(new Date().getMonth() + 1).padStart(2, "0");
+    const yearOptions = useMemo(() => getYearOptions(2000), []);
+
+    const buildInitialState = (data) => {
+        const parsedStart = parseMonthYear(data?.startDate);
+        const parsedEnd = parseMonthYear(data?.endDate);
+        return {
+            company: data?.company || "",
+            companyWebsite: data?.companyWebsite || "",
+            position: data?.position || "",
+            startMonth: parsedStart?.month || currentMonth,
+            startYear: parsedStart?.year || currentYear,
+            endMonth: parsedEnd?.month || currentMonth,
+            endYear: parsedEnd?.year || currentYear,
+            isPresent: Boolean(parsedEnd?.isPresent),
+            description: data?.description || "",
+        };
+    };
+
+    const [formState, setFormState] = useState(() => buildInitialState(existingData));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
-        setUpdatedExperience({ ...existingData });
+        setFormState(buildInitialState(existingData));
         setErrors({});
     }, [existingData]);
 
+    const startDate = formatMonthYear(formState.startMonth, formState.startYear);
+    const endDate = formState.isPresent
+        ? "Present"
+        : formatMonthYear(formState.endMonth, formState.endYear);
+    const durationInfo = calculateDuration(startDate, endDate);
+    const calculatedExp = durationInfo?.isValidOrder ? durationInfo.formatted : "";
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUpdatedExperience((prev) => ({ ...prev, [name]: value }));
-        // Clear error when user types
-        if (errors[name]) {
-            setErrors(prev => ({ ...prev, [name]: '' }));
+        const { name, value, type, checked } = e.target;
+        setFormState((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+        if (errors[name] || errors.dateRange || errors.submit) {
+            setErrors((prev) => ({ ...prev, [name]: "", dateRange: "", submit: "" }));
         }
     };
 
     const validateForm = () => {
         const newErrors = {};
-        if (!updatedExperience.company?.trim()) newErrors.company = 'Company is required';
-        if (!updatedExperience.position?.trim()) newErrors.position = 'Position is required';
-        if (!updatedExperience.startDate?.trim()) newErrors.startDate = 'Start date is required';
-        if (!updatedExperience.endDate?.trim()) newErrors.endDate = 'End date is required';
-        if (!updatedExperience.description?.trim()) newErrors.description = 'Description is required';
+        if (!formState.company?.trim()) newErrors.company = "Company is required";
+        if (!formState.position?.trim()) newErrors.position = "Position is required";
+        if (!durationInfo || !durationInfo.isValidOrder) {
+            newErrors.dateRange = "End date cannot be earlier than start date";
+        }
+        if (!formState.description?.trim()) newErrors.description = "Description is required";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -209,18 +247,30 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
         e.preventDefault();
         if (!validateForm()) return;
 
+        const payload = {
+            company: formState.company.trim(),
+            companyWebsite: formState.companyWebsite.trim(),
+            position: formState.position.trim(),
+            startDate,
+            endDate,
+            exp: calculatedExp,
+            description: formState.description.trim(),
+        };
+
         setIsSubmitting(true);
         try {
             const encodedCompany = encodeURIComponent(existingData.company);
             const res = await axios.put(
                 `${API_BASE_URL}/experience/company/${encodedCompany}`,
-                updatedExperience
+                payload
             );
-            onUpdate(res.data.data);
+            onUpdate(res.data?.data || res.data);
             onClose();
         } catch (err) {
             console.error("Error updating experience:", err);
-            setErrors({ submit: 'Failed to update experience. Please try again.' });
+            setErrors({
+                submit: err.response?.data?.message || "Failed to update experience. Please try again.",
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -269,45 +319,6 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
         }
     };
 
-    const fieldConfigs = [
-        { name: 'company', label: 'Company Name', icon: FaBuilding, color: 'blue', placeholder: 'e.g. Google' },
-        { name: 'position', label: 'Position', icon: FaUserTie, color: 'indigo', placeholder: 'e.g. Software Engineer' },
-        { name: 'startDate', label: 'Start Date', icon: FaCalendarAlt, color: 'green', placeholder: 'MM/YYYY' },
-        { name: 'endDate', label: 'End Date', icon: FaCalendarAlt, color: 'orange', placeholder: 'MM/YYYY or Present' },
-        { name: 'exp', label: 'Duration', icon: FaClock, color: 'purple', placeholder: 'e.g. 2 years' },
-    ];
-
-    const getColorClasses = (color) => {
-        const colors = {
-            blue: {
-                focus: 'focus:border-blue-500 focus:ring-blue-200',
-                icon: 'text-blue-600',
-                button: 'from-blue-600 to-indigo-600'
-            },
-            indigo: {
-                focus: 'focus:border-indigo-500 focus:ring-indigo-200',
-                icon: 'text-indigo-600',
-                button: 'from-indigo-600 to-purple-600'
-            },
-            green: {
-                focus: 'focus:border-green-500 focus:ring-green-200',
-                icon: 'text-green-600',
-                button: 'from-green-600 to-emerald-600'
-            },
-            orange: {
-                focus: 'focus:border-orange-500 focus:ring-orange-200',
-                icon: 'text-orange-600',
-                button: 'from-orange-600 to-red-600'
-            },
-            purple: {
-                focus: 'focus:border-purple-500 focus:ring-purple-200',
-                icon: 'text-purple-600',
-                button: 'from-purple-600 to-pink-600'
-            },
-        };
-        return colors[color] || colors.blue;
-    };
-
     return (
         <AnimatePresence>
             {isOpen && (
@@ -324,7 +335,7 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className="relative w-full max-w-md"
+                        className="relative w-full max-w-lg"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="relative transform overflow-hidden rounded-2xl bg-white shadow-2xl">
@@ -360,53 +371,214 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
                             </div>
 
                             {/* Modal body */}
-                            <div className="bg-white px-6 py-5 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                                <form onSubmit={handleSubmit} className="space-y-4">
-                                    {fieldConfigs.map((field) => {
-                                        const colors = getColorClasses(field.color);
-                                        return (
-                                            <motion.div
-                                                key={field.name}
-                                                variants={formItemVariants}
-                                                initial="hidden"
-                                                animate="visible"
+                            <div className="bg-white px-5 sm:px-6 py-5 max-h-[65vh] overflow-y-auto">
+                                <form id="update-experience-form" onSubmit={handleSubmit} className="space-y-4">
+                                    {/* Company Name */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center gap-2">
+                                                <FaBuilding className="text-blue-600" />
+                                                Company Name
+                                            </span>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                name="company"
+                                                value={formState.company}
+                                                onChange={handleChange}
+                                                className={`w-full px-4 py-2.5 rounded-lg border ${
+                                                    errors.company
+                                                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                                                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
+                                                } focus:ring-2 outline-none transition-all text-sm`}
+                                                placeholder="e.g. Google"
+                                            />
+                                            {formState.company && !errors.company && (
+                                                <FaCheckCircle className="absolute right-3 top-3 text-green-500 text-sm" />
+                                            )}
+                                        </div>
+                                        {errors.company && (
+                                            <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                                                <FaExclamationCircle className="text-xs" />
+                                                {errors.company}
+                                            </p>
+                                        )}
+                                    </motion.div>
+
+                                    {/* Company Website (Optional) */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center gap-2">
+                                                <FaGlobe className="text-cyan-600" />
+                                                Company Website
+                                                <span className="text-xs font-normal text-gray-400">(Optional)</span>
+                                            </span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="companyWebsite"
+                                            value={formState.companyWebsite}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-cyan-500 focus:ring-cyan-200 focus:ring-2 outline-none transition-all text-sm"
+                                            placeholder="e.g. https://company.com"
+                                        />
+                                    </motion.div>
+
+                                    {/* Position */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center gap-2">
+                                                <FaUserTie className="text-indigo-600" />
+                                                Position
+                                            </span>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                name="position"
+                                                value={formState.position}
+                                                onChange={handleChange}
+                                                className={`w-full px-4 py-2.5 rounded-lg border ${
+                                                    errors.position
+                                                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                                                        : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-200"
+                                                } focus:ring-2 outline-none transition-all text-sm`}
+                                                placeholder="e.g. Software Engineer"
+                                            />
+                                            {formState.position && !errors.position && (
+                                                <FaCheckCircle className="absolute right-3 top-3 text-green-500 text-sm" />
+                                            )}
+                                        </div>
+                                        {errors.position && (
+                                            <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                                                <FaExclamationCircle className="text-xs" />
+                                                {errors.position}
+                                            </p>
+                                        )}
+                                    </motion.div>
+
+                                    {/* Start Date (Month & Year) */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center gap-2">
+                                                <FaCalendarAlt className="text-green-600" />
+                                                Start Date
+                                            </span>
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <select
+                                                aria-label="Start Month"
+                                                name="startMonth"
+                                                value={formState.startMonth}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all text-sm bg-white"
                                             >
-                                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                                    <span className="flex items-center gap-2">
-                                                        <field.icon className={colors.icon} />
-                                                        {field.label}
-                                                    </span>
-                                                </label>
-                                                <div className="relative">
-                                                    <input
-                                                        type="text"
-                                                        name={field.name}
-                                                        value={updatedExperience[field.name] || ''}
-                                                        onChange={handleChange}
-                                                        className={`w-full px-4 py-2.5 rounded-lg border ${
-                                                            errors[field.name] 
-                                                                ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                                                                : `border-gray-300 ${colors.focus}`
-                                                        } focus:ring-2 outline-none transition-all text-sm`}
-                                                        placeholder={field.placeholder}
-                                                    />
-                                                    {updatedExperience[field.name] && !errors[field.name] && (
-                                                        <FaCheckCircle className="absolute right-3 top-3 text-green-500 text-sm" />
-                                                    )}
-                                                </div>
-                                                {errors[field.name] && (
-                                                    <motion.p 
-                                                        initial={{ opacity: 0, y: -5 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        className="mt-1 text-xs text-red-600 flex items-center gap-1"
-                                                    >
-                                                        <FaExclamationCircle className="text-xs" />
-                                                        {errors[field.name]}
-                                                    </motion.p>
-                                                )}
-                                            </motion.div>
-                                        );
-                                    })}
+                                                {MONTH_OPTIONS.map((m) => (
+                                                    <option key={m.value} value={m.value}>
+                                                        {m.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                aria-label="Start Year"
+                                                name="startYear"
+                                                value={formState.startYear}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all text-sm bg-white"
+                                            >
+                                                {yearOptions.map((year) => (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </motion.div>
+
+                                    {/* End Date (Month & Year or Present) */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-sm font-semibold text-gray-700">
+                                                <span className="flex items-center gap-2">
+                                                    <FaCalendarAlt className="text-orange-600" />
+                                                    End Date
+                                                </span>
+                                            </label>
+                                            <label className="inline-flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer select-none">
+                                                <input
+                                                    type="checkbox"
+                                                    name="isPresent"
+                                                    checked={formState.isPresent}
+                                                    onChange={handleChange}
+                                                    className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                />
+                                                Currently working here (Present)
+                                            </label>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <select
+                                                aria-label="End Month"
+                                                name="endMonth"
+                                                value={formState.endMonth}
+                                                onChange={handleChange}
+                                                disabled={formState.isPresent}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                            >
+                                                {MONTH_OPTIONS.map((m) => (
+                                                    <option key={m.value} value={m.value}>
+                                                        {m.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                aria-label="End Year"
+                                                name="endYear"
+                                                value={formState.endYear}
+                                                onChange={handleChange}
+                                                disabled={formState.isPresent}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                            >
+                                                {yearOptions.map((year) => (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        {errors.dateRange && (
+                                            <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                                                <FaExclamationCircle className="text-xs" />
+                                                {errors.dateRange}
+                                            </p>
+                                        )}
+                                    </motion.div>
+
+                                    {/* Auto-calculated Duration */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center justify-between">
+                                                <span className="flex items-center gap-2">
+                                                    <FaClock className="text-purple-600" />
+                                                    Duration
+                                                </span>
+                                                <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+                                                    Auto-calculated
+                                                </span>
+                                            </span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="exp"
+                                            value={calculatedExp || "Invalid date range"}
+                                            readOnly
+                                            className={`w-full px-4 py-2.5 rounded-lg border text-sm font-medium outline-none ${
+                                                durationInfo?.isValidOrder
+                                                    ? "border-purple-200 bg-purple-50/60 text-purple-800"
+                                                    : "border-red-300 bg-red-50 text-red-600"
+                                            }`}
+                                        />
+                                    </motion.div>
 
                                     {/* Description Field */}
                                     <motion.div variants={formItemVariants} initial="hidden" animate="visible">
@@ -420,7 +592,7 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
                                             <textarea
                                                 name="description"
                                                 rows={4}
-                                                value={updatedExperience.description || ''}
+                                                value={formState.description}
                                                 onChange={handleChange}
                                                 className={`w-full px-4 py-2.5 rounded-lg border ${
                                                     errors.description 
@@ -464,11 +636,11 @@ const ExpiUpdate = ({ isOpen, onClose, existingData, onUpdate }) => {
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        type="button"
-                                        onClick={handleSubmit}
-                                        disabled={isSubmitting}
+                                        type="submit"
+                                        form="update-experience-form"
+                                        disabled={isSubmitting || !durationInfo?.isValidOrder}
                                         className={`flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-2.5 rounded-lg text-sm font-semibold text-white shadow-lg transition-all duration-200 ${
-                                            isSubmitting 
+                                            isSubmitting || !durationInfo?.isValidOrder
                                                 ? 'bg-gradient-to-r from-indigo-400 to-purple-400 cursor-not-allowed' 
                                                 : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl'
                                         }`}

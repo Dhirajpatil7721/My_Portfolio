@@ -115,10 +115,10 @@
 
 
 import { useNavigate } from "react-router-dom";
-import { FaHome, FaUser, FaCode, FaProjectDiagram, FaBriefcase, FaCertificate, FaEnvelope, FaLinkedin, FaGithub, FaInstagram, FaFacebook } from "react-icons/fa";
-import { FiArrowUp } from "react-icons/fi";
+import { FaHome, FaUser, FaProjectDiagram, FaBriefcase, FaCertificate, FaEnvelope, FaLinkedin, FaGithub, FaInstagram, FaFacebook } from "react-icons/fa";
+import { FiArrowUp, FiArrowRight } from "react-icons/fi";
 import { motion } from "framer-motion";
-import logo from "../assets/logo1.png";
+import logo2 from "../assets/logo2.png";
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -130,31 +130,54 @@ export default function Footer() {
     });
   };
 
+  const navigateAndScroll = (path) => {
+    scrollToTop();
+    navigate(path);
+  };
+
   const navItems = [
-    { path: "/", name: "Home", icon: <FaHome className="mr-2" /> },
-    { path: "/about", name: "About", icon: <FaUser className="mr-2" /> },
-    { path: "/skills", name: "Skills", icon: <FaCode className="mr-2" /> },
-    { path: "/projects", name: "Projects", icon: <FaProjectDiagram className="mr-2" /> },
-    { path: "/experience", name: "Experience", icon: <FaBriefcase className="mr-2" /> },
-    { path: "/certifications", name: "Certifications", icon: <FaCertificate className="mr-2" /> },
-    { path: "/contact", name: "Contact", icon: <FaEnvelope className="mr-2" /> }
+    { path: "/", name: "Home", icon: <FaHome className="w-3.5 h-3.5" /> },
+    { path: "/about", name: "About", icon: <FaUser className="w-3.5 h-3.5" /> },
+    { path: "/projects", name: "Projects", icon: <FaProjectDiagram className="w-3.5 h-3.5" /> },
+    { path: "/experience", name: "Experience", icon: <FaBriefcase className="w-3.5 h-3.5" /> },
+    { path: "/certifications", name: "Certifications", icon: <FaCertificate className="w-3.5 h-3.5" /> },
+    { path: "/contact", name: "Contact", icon: <FaEnvelope className="w-3.5 h-3.5" /> }
   ];
 
   const socialLinks = [
-    { url: "https://www.linkedin.com/in/dhiraj-patil-046646230/", icon: <FaLinkedin size={20} />, name: "LinkedIn" },
-    { url: "https://github.com/Dhirajpatil7721", icon: <FaGithub size={20} />, name: "GitHub" },
-    { url: "https://www.instagram.com/dhiraj._.patil_/profilecard/?igsh=emdwaHU5a2p2bmds", icon: <FaInstagram size={20} />, name: "Instagram" },
-    { url: "https://www.facebook.com/share/1DL1unsKjW/", icon: <FaFacebook size={20} />, name: "Facebook" }
+    {
+      url: "https://www.linkedin.com/in/dhiraj-patil-046646230/",
+      icon: <FaLinkedin size={18} />,
+      name: "LinkedIn",
+      hoverClass: "hover:from-blue-600 hover:to-cyan-500 hover:shadow-blue-500/30 hover:border-blue-400/50"
+    },
+    {
+      url: "https://github.com/Dhirajpatil7721",
+      icon: <FaGithub size={18} />,
+      name: "GitHub",
+      hoverClass: "hover:from-slate-600 hover:to-slate-800 hover:shadow-slate-400/20 hover:border-slate-400/50"
+    },
+    {
+      url: "https://www.instagram.com/dhiraj._.patil_/profilecard/?igsh=emdwaHU5a2p2bmds",
+      icon: <FaInstagram size={18} />,
+      name: "Instagram",
+      hoverClass: "hover:from-pink-500 hover:to-purple-600 hover:shadow-pink-500/30 hover:border-pink-400/50"
+    },
+    {
+      url: "https://www.facebook.com/share/1DL1unsKjW/",
+      icon: <FaFacebook size={18} />,
+      name: "Facebook",
+      hoverClass: "hover:from-blue-600 hover:to-indigo-600 hover:shadow-indigo-500/30 hover:border-blue-400/50"
+    }
   ];
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.3
+        delayChildren: 0.15
       }
     }
   };
@@ -167,164 +190,185 @@ export default function Footer() {
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 10
+        damping: 12
       }
     }
   };
 
   return (
-    <motion.footer 
+    <motion.footer
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-12 px-4 relative overflow-hidden"
+      className="relative bg-slate-950 text-white pt-14 pb-8 px-4 sm:px-6 overflow-hidden border-t border-white/10"
     >
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+      {/* Glowing top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-70" />
+      <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent blur-sm" />
+
+      {/* Subtle ambient background glows & grid */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -left-24 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-36 -right-24 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.8) 1px, transparent 0)",
+            backgroundSize: "24px 24px"
+          }}
+        />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center"
+          className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-10"
         >
-          {/* Logo Section */}
-          <motion.div 
+          {/* Brand & Status Column */}
+          <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center md:items-start"
+            className="md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left space-y-4"
           >
-            <motion.img 
+            <motion.img
               whileHover={{ scale: 1.05, rotate: 2 }}
               whileTap={{ scale: 0.95 }}
-              src={logo} 
-              alt="Logo" 
-              className="w-20 h-auto cursor-pointer mb-4 hover:opacity-80 transition-all duration-300 filter drop-shadow-lg"
-              onClick={() => {
-                scrollToTop();
-                navigate('/');
-              }}
+              src={logo2}
+              alt="Dhiraj Patil Logo"
+              className="w-28 h-auto cursor-pointer hover:opacity-90 transition-all duration-300 drop-shadow-[0_0_15px_rgba(34,211,238,0.25)]"
+              onClick={() => navigateAndScroll("/")}
             />
-            <p className="text-gray-400 text-sm text-center md:text-left">MERN Stack Developer</p>
-            
-            {/* Decorative line */}
-            <motion.div 
-              initial={{ width: 0 }}
-              whileInView={{ width: "60px" }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 mt-3 rounded-full hidden md:block"
-            />
+
+            <p className="text-sm font-medium bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              MERN Stack &amp; Mobile App Developer
+            </p>
+
+            <p className="text-slate-400 text-xs sm:text-sm max-w-sm leading-relaxed">
+              Building scalable web platforms, cross-platform mobile apps, and production-ready cloud architectures.
+            </p>
+
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              </span>
+              <span className="text-xs text-slate-300 font-medium">Available for new opportunities</span>
+            </div>
           </motion.div>
 
-          {/* Navigation Links */}
-          <motion.div 
+          {/* Navigation Links Column */}
+          <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center"
+            className="md:col-span-4 flex flex-col items-center md:items-start"
           >
-            <h3 className="text-lg font-semibold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Quick Links</h3>
-            <ul className="grid grid-cols-2 gap-x-8 gap-y-2">
-              {navItems.map((item, index) => (
-                <motion.li 
+            <div className="mb-4 text-center md:text-left">
+              <h3 className="text-sm uppercase tracking-wider font-semibold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                Quick Links
+              </h3>
+              <div className="h-0.5 w-10 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full mt-1.5 mx-auto md:mx-0" />
+            </div>
+
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2 w-full max-w-xs md:max-w-none">
+              {navItems.map((item) => (
+                <motion.li
                   key={item.path}
-                  whileHover={{ x: 5 }}
+                  whileHover={{ x: 3 }}
                   transition={{ type: "spring", stiffness: 400 }}
                 >
                   <button
-                    onClick={() => {
-                      scrollToTop();
-                      navigate(item.path);
-                    }}
-                    className="flex items-center text-gray-400 hover:text-white transition-all duration-300 group"
+                    onClick={() => navigateAndScroll(item.path)}
+                    className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/[0.05] border border-transparent hover:border-white/10 transition-all duration-300 group text-left"
                   >
-                    <span className="mr-2 text-blue-400 group-hover:text-blue-300 transition-colors">
+                    <span className="text-cyan-400/80 group-hover:text-cyan-300 transition-colors">
                       {item.icon}
                     </span>
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">
-                      {item.name}
-                    </span>
+                    <span className="truncate">{item.name}</span>
                   </button>
                 </motion.li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Social Links */}
-          <motion.div 
+          {/* Connect & CTA Column */}
+          <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center md:items-end"
+            className="md:col-span-3 flex flex-col items-center md:items-end"
           >
-            <h3 className="text-lg font-semibold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Connect With Me</h3>
-            <div className="flex space-x-3">
+            <div className="mb-4 text-center md:text-right">
+              <h3 className="text-sm uppercase tracking-wider font-semibold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                Connect With Me
+              </h3>
+              <div className="h-0.5 w-10 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full mt-1.5 mx-auto md:ml-auto md:mr-0" />
+            </div>
+
+            <div className="flex items-center gap-3 mb-5">
               {socialLinks.map((social) => (
                 <motion.a
                   key={social.name}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ y: -5, scale: 1.1 }}
+                  whileHover={{ y: -4, scale: 1.08 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gray-800 hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 p-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl relative group"
+                  className={`bg-white/[0.05] backdrop-blur-md border border-white/10 bg-gradient-to-br p-3 rounded-xl text-slate-300 hover:text-white transition-all duration-300 shadow-lg relative group ${social.hoverClass}`}
                   aria-label={social.name}
                 >
                   {social.icon}
-                  
-                  {/* Tooltip */}
-                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                  <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 border border-white/10 text-white text-xs py-1 px-2.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none shadow-xl">
                     {social.name}
                   </span>
                 </motion.a>
               ))}
             </div>
 
-            {/* Decorative line for mobile/tablet */}
-            <motion.div 
-              initial={{ width: 0 }}
-              whileInView={{ width: "60px" }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 mt-3 rounded-full md:hidden"
-            />
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigateAndScroll("/contact")}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold bg-gradient-to-r from-cyan-500/20 to-purple-500/20 hover:from-cyan-500 hover:to-blue-600 text-cyan-300 hover:text-white border border-cyan-400/30 hover:border-transparent transition-all duration-300 shadow-md hover:shadow-cyan-500/25 group"
+            >
+              <span>Let&apos;s Work Together</span>
+              <FiArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </motion.button>
           </motion.div>
         </motion.div>
 
-        {/* Divider with animation */}
-        <motion.div 
+        {/* Gradient Divider */}
+        <motion.div
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="border-t border-gray-800 my-6"
-        ></motion.div>
+          className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent mb-6"
+        />
 
-        {/* Copyright and Back to Top */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+        {/* Bottom Copyright & Back to Top */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="flex flex-col md:flex-row justify-between items-center"
+          transition={{ delay: 0.2 }}
+          className="flex flex-col sm:flex-row justify-between items-center gap-4"
         >
-          <p className="text-sm text-gray-500 mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Dhiraj Patil. All rights reserved.
+          <p className="text-xs sm:text-sm text-slate-500 text-center sm:text-left">
+            &copy; {new Date().getFullYear()} <span className="text-slate-300 font-medium">Dhiraj Patil</span>. All rights reserved.
           </p>
-          
+
           <motion.button
             onClick={scrollToTop}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center text-sm text-gray-500 hover:text-white transition-all duration-300 group"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/40 transition-all duration-300 group"
           >
             <span>Back to top</span>
             <motion.span
-              animate={{ y: [0, -3, 0] }}
+              animate={{ y: [0, -2.5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-cyan-400"
             >
-              <FiArrowUp className="ml-1 group-hover:translate-y-[-2px] transition-transform" />
+              <FiArrowUp className="w-3.5 h-3.5" />
             </motion.span>
           </motion.button>
         </motion.div>

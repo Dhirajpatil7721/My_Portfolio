@@ -3,17 +3,20 @@ const mongoose = require("mongoose");
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
+  company: { type: String, default: "", trim: true },
   subject: { type: String, required: true },
   message: { type: String, required: true },
 });
 
 const experienceSchema = new mongoose.Schema({
-  company: { type: String, required: true },
-  position: { type: String  },
-  startDate: { type: String },
-  endDate: { type: String },
-  exp: { type: String },
-  description: { type: String },
+  company: { type: String, required: true, trim: true },
+  companyWebsite: { type: String, default: "", trim: true },
+  position: { type: String, trim: true },
+  startDate: { type: String, trim: true },
+  endDate: { type: String, trim: true },
+  exp: { type: String, trim: true },
+  totalMonths: { type: Number, default: 0 },
+  description: { type: String, trim: true },
 });
 
 const projectSchema = new mongoose.Schema({

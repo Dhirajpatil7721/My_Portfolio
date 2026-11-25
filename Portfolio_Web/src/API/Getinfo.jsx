@@ -643,7 +643,7 @@ function Getinfo() {
                 <FaInbox className="text-white text-xl" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Contact Messages
                 </h1>
                 <p className="text-gray-500 text-sm mt-1">
@@ -822,7 +822,12 @@ function Getinfo() {
                             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mr-3 shadow-md">
                               <FaUser className="text-white text-xs" />
                             </div>
-                            <div className="text-sm font-semibold text-gray-900">{item.name}</div>
+                            <div>
+                              <div className="text-sm font-semibold text-gray-900">{item.name}</div>
+                              {item.company && (
+                                <div className="text-xs text-gray-500">{item.company}</div>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

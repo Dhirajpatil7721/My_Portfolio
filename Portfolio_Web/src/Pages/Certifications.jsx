@@ -239,14 +239,14 @@ export default function Certifications() {
   };
 
   return (
-    <section id="certifications" className="bg-gradient-to-b from-white to-slate-50 py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section id="certifications" className="bg-gradient-to-b from-white to-slate-50 pt-16 pb-16 sm:pt-[76px] sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16 relative"
+          className="text-center mb-4 sm:mb-6 relative"
         >
           {/* Decorative elements */}
           <motion.div
@@ -262,7 +262,7 @@ export default function Certifications() {
 
 
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4  mt-5">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3">
             <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent">
               My Certifications
             </span>
@@ -271,12 +271,12 @@ export default function Certifications() {
           {/* Animated underline */}
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: "100px" }}
+            animate={{ width: "80px" }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="h-1 bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 mx-auto rounded-full mb-4"
+            className="h-1 bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 mx-auto rounded-full mb-3"
           />
 
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
+          <p className="text-gray-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto px-4">
             Recognized achievements and completed training programs
           </p>
         </motion.div>
@@ -287,14 +287,14 @@ export default function Certifications() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
         >
           {certifications.map((cert, index) => (
             <motion.div
               key={index}
               variants={item}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative bg-white p-4 sm:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 
+              whileHover={{ y: -6, scale: 1.02 }}
+              className="group relative flex flex-col h-full bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 
                          hover:shadow-2xl hover:shadow-blue-500/10 hover:border-blue-200 
                          transition-all duration-500 cursor-pointer overflow-hidden"
               onClick={() => handleCardClick(cert)}
@@ -315,12 +315,12 @@ export default function Certifications() {
               </div>
 
               {/* Image Container */}
-              <div className="relative w-full h-44 sm:h-48 md:h-52 mb-3 sm:mb-4 overflow-hidden rounded-lg">
+              <div className="relative w-full h-40 sm:h-44 lg:h-40 xl:h-44 mb-3 overflow-hidden rounded-lg">
                 <motion.img
                   src={cert.image}
                   alt={cert.title}
                   className="w-full h-full object-contain bg-slate-50 p-2"
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.08 }}
                   transition={{ duration: 0.4 }}
                 />
 
@@ -330,20 +330,20 @@ export default function Certifications() {
               </div>
 
               {/* Content */}
-              <div className="relative z-10">
-                <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-1.5
+              <div className="relative z-10 flex flex-col flex-1">
+                <h3 className="text-sm font-bold text-slate-800 mb-2
                                group-hover:text-transparent group-hover:bg-clip-text 
                                group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-600
                                transition-all duration-300 line-clamp-2">
                   {cert.title}
                 </h3>
 
-                <div className="flex items-center justify-between text-xs sm:text-sm">
-                  <span className="text-slate-500 flex items-center gap-1">
-                    <Award className="w-3 h-3" />
-                    {cert.issuer}
+                <div className="mt-auto flex items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-500 flex items-center gap-1 truncate">
+                    <Award className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{cert.issuer}</span>
                   </span>
-                  <span className="text-cyan-600 font-medium bg-cyan-50 px-2 py-0.5 rounded-full">
+                  <span className="shrink-0 text-cyan-600 font-medium bg-cyan-50 px-2 py-0.5 rounded-full">
                     {cert.date}
                   </span>
                 </div>

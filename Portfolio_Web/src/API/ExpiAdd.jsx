@@ -218,56 +218,109 @@
 // export default ExpiAdd;
 
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FaBuilding, 
+  FaGlobe,
   FaUserTie, 
   FaCalendarAlt, 
   FaClock, 
   FaFileAlt, 
   FaTimes,
   FaSave,
-  FaBriefcase
+  FaBriefcase,
+  FaExclamationCircle
 } from "react-icons/fa";
+import {
+  MONTH_OPTIONS,
+  getYearOptions,
+  formatMonthYear,
+  calculateDuration,
+} from "../utils/experienceUtils";
 
 const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
-    const [newExperience, setNewExperience] = useState({
+    const currentYear = String(new Date().getFullYear());
+    const currentMonth = String(new Date().getMonth() + 1).padStart(2, "0");
+    const yearOptions = useMemo(() => getYearOptions(2000), []);
+
+    const [formState, setFormState] = useState({
         company: "",
+        companyWebsite: "",
         position: "",
-        startDate: "",
-        endDate: "",
-        exp: "",
+        startMonth: currentMonth,
+        startYear: currentYear,
+        endMonth: currentMonth,
+        endYear: currentYear,
+        isPresent: false,
         description: "",
     });
+    const [errorMsg, setErrorMsg] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const startDate = formatMonthYear(formState.startMonth, formState.startYear);
+    const endDate = formState.isPresent
+        ? "Present"
+        : formatMonthYear(formState.endMonth, formState.endYear);
+    const durationInfo = calculateDuration(startDate, endDate);
+    const calculatedExp = durationInfo?.isValidOrder ? durationInfo.formatted : "";
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNewExperience((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setErrorMsg("");
+        setFormState((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+    };
+
+    const resetForm = () => {
+        setFormState({
+            company: "",
+            companyWebsite: "",
+            position: "",
+            startMonth: currentMonth,
+            startYear: currentYear,
+            endMonth: currentMonth,
+            endYear: currentYear,
+            isPresent: false,
+            description: "",
+        });
+        setErrorMsg("");
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formState.company.trim() || !formState.position.trim() || !formState.description.trim()) {
+            setErrorMsg("Please fill in Company Name, Position, and Description.");
+            return;
+        }
+        if (!durationInfo || !durationInfo.isValidOrder) {
+            setErrorMsg("End Date cannot be earlier than Start Date.");
+            return;
+        }
+
+        const payload = {
+            company: formState.company.trim(),
+            companyWebsite: formState.companyWebsite.trim(),
+            position: formState.position.trim(),
+            startDate,
+            endDate,
+            exp: calculatedExp,
+            description: formState.description.trim(),
+        };
+
         setIsSubmitting(true);
         try {
-            const response = await axios.post(`${API_BASE_URL}/experience`, newExperience);
-            onAddExperience(response.data);
+            const response = await axios.post(`${API_BASE_URL}/experience`, payload);
+            onAddExperience(response.data?.data || response.data);
             onClose();
-            // Reset form after successful submission
-            setNewExperience({
-                company: "",
-                position: "",
-                startDate: "",
-                endDate: "",
-                exp: "",
-                description: "",
-            });
-
+            resetForm();
         } catch (err) {
             console.error("Error adding experience:", err);
+            setErrorMsg(err.response?.data?.message || "Failed to save experience. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -332,7 +385,7 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className="relative w-full max-w-md"
+                        className="relative w-full max-w-lg"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Modal content */}
@@ -368,8 +421,8 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                             </div>
 
                             {/* Modal body */}
-                            <div className="bg-white px-6 py-5 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                                <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="bg-white px-5 sm:px-6 py-5 max-h-[65vh] overflow-y-auto">
+                                <form id="add-experience-form" onSubmit={handleSubmit} className="space-y-4">
                                     {/* Company Name */}
                                     <motion.div variants={formItemVariants} initial="hidden" animate="visible">
                                         <label htmlFor="company" className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -382,11 +435,31 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                                             id="company"
                                             type="text"
                                             name="company"
-                                            value={newExperience.company}
+                                            value={formState.company}
                                             onChange={handleChange}
                                             className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-sm"
                                             placeholder="e.g. Google"
                                             required
+                                        />
+                                    </motion.div>
+
+                                    {/* Company Website (Optional) */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label htmlFor="companyWebsite" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center gap-2">
+                                                <FaGlobe className="text-cyan-600" />
+                                                Company Website
+                                                <span className="text-xs font-normal text-gray-400">(Optional)</span>
+                                            </span>
+                                        </label>
+                                        <input
+                                            id="companyWebsite"
+                                            type="text"
+                                            name="companyWebsite"
+                                            value={formState.companyWebsite}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all text-sm"
+                                            placeholder="e.g. https://company.com"
                                         />
                                     </motion.div>
 
@@ -402,7 +475,7 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                                             id="position"
                                             type="text"
                                             name="position"
-                                            value={newExperience.position}
+                                            value={formState.position}
                                             onChange={handleChange}
                                             className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-sm"
                                             placeholder="e.g. Software Engineer"
@@ -410,64 +483,120 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                                         />
                                     </motion.div>
 
-                                    {/* Start Date and End Date */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <motion.div variants={formItemVariants} initial="hidden" animate="visible">
-                                            <label htmlFor="startDate" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                                <span className="flex items-center gap-2">
-                                                    <FaCalendarAlt className="text-green-600" />
-                                                    Start Date
-                                                </span>
-                                            </label>
-                                            <input
-                                                id="startDate"
-                                                type="text"
-                                                name="startDate"
-                                                value={newExperience.startDate}
+                                    {/* Start Date (Month & Year) */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                            <span className="flex items-center gap-2">
+                                                <FaCalendarAlt className="text-green-600" />
+                                                Start Date
+                                            </span>
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <select
+                                                aria-label="Start Month"
+                                                name="startMonth"
+                                                value={formState.startMonth}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all text-sm"
-                                                placeholder="MM/YYYY"
-                                                required
-                                            />
-                                        </motion.div>
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all text-sm bg-white"
+                                            >
+                                                {MONTH_OPTIONS.map((m) => (
+                                                    <option key={m.value} value={m.value}>
+                                                        {m.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                aria-label="Start Year"
+                                                name="startYear"
+                                                value={formState.startYear}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all text-sm bg-white"
+                                            >
+                                                {yearOptions.map((year) => (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </motion.div>
 
-                                        <motion.div variants={formItemVariants} initial="hidden" animate="visible">
-                                            <label htmlFor="endDate" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                    {/* End Date (Month & Year or Present) */}
+                                    <motion.div variants={formItemVariants} initial="hidden" animate="visible">
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-sm font-semibold text-gray-700">
                                                 <span className="flex items-center gap-2">
                                                     <FaCalendarAlt className="text-orange-600" />
                                                     End Date
                                                 </span>
                                             </label>
-                                            <input
-                                                id="endDate"
-                                                type="text"
-                                                name="endDate"
-                                                value={newExperience.endDate}
+                                            <label className="inline-flex items-center gap-2 text-xs font-medium text-gray-700 cursor-pointer select-none">
+                                                <input
+                                                    type="checkbox"
+                                                    name="isPresent"
+                                                    checked={formState.isPresent}
+                                                    onChange={handleChange}
+                                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                />
+                                                Currently working here (Present)
+                                            </label>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <select
+                                                aria-label="End Month"
+                                                name="endMonth"
+                                                value={formState.endMonth}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all text-sm"
-                                                placeholder="MM/YYYY or Present"
-                                                required
-                                            />
-                                        </motion.div>
-                                    </div>
+                                                disabled={formState.isPresent}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                            >
+                                                {MONTH_OPTIONS.map((m) => (
+                                                    <option key={m.value} value={m.value}>
+                                                        {m.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <select
+                                                aria-label="End Year"
+                                                name="endYear"
+                                                value={formState.endYear}
+                                                onChange={handleChange}
+                                                disabled={formState.isPresent}
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                            >
+                                                {yearOptions.map((year) => (
+                                                    <option key={year} value={year}>
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </motion.div>
 
-                                    {/* Duration */}
+                                    {/* Auto-calculated Duration */}
                                     <motion.div variants={formItemVariants} initial="hidden" animate="visible">
                                         <label htmlFor="exp" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                                            <span className="flex items-center gap-2">
-                                                <FaClock className="text-purple-600" />
-                                                Duration
+                                            <span className="flex items-center justify-between">
+                                                <span className="flex items-center gap-2">
+                                                    <FaClock className="text-purple-600" />
+                                                    Duration
+                                                </span>
+                                                <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+                                                    Auto-calculated
+                                                </span>
                                             </span>
                                         </label>
                                         <input
                                             id="exp"
                                             type="text"
                                             name="exp"
-                                            value={newExperience.exp}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all text-sm"
-                                            placeholder="e.g. 2 years"
-                                            required
+                                            value={calculatedExp || "Invalid date range"}
+                                            readOnly
+                                            className={`w-full px-4 py-2.5 rounded-lg border text-sm font-medium outline-none ${
+                                                durationInfo?.isValidOrder
+                                                    ? "border-purple-200 bg-purple-50/60 text-purple-800"
+                                                    : "border-red-300 bg-red-50 text-red-600"
+                                            }`}
                                         />
                                     </motion.div>
 
@@ -483,13 +612,20 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                                             id="description"
                                             name="description"
                                             rows={4}
-                                            value={newExperience.description}
+                                            value={formState.description}
                                             onChange={handleChange}
                                             className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all text-sm resize-none"
                                             placeholder="Describe your responsibilities and achievements"
                                             required
                                         />
                                     </motion.div>
+
+                                    {errorMsg && (
+                                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600 flex items-center gap-2">
+                                            <FaExclamationCircle className="flex-shrink-0" />
+                                            <span>{errorMsg}</span>
+                                        </div>
+                                    )}
                                 </form>
                             </div>
 
@@ -499,11 +635,11 @@ const ExpiAdd = ({ isOpen, onClose, onAddExperience }) => {
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        type="button"
-                                        onClick={handleSubmit}
-                                        disabled={isSubmitting}
+                                        type="submit"
+                                        form="add-experience-form"
+                                        disabled={isSubmitting || !durationInfo?.isValidOrder}
                                         className={`flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-2.5 rounded-lg text-sm font-semibold text-white shadow-lg transition-all duration-200 ${
-                                            isSubmitting 
+                                            isSubmitting || !durationInfo?.isValidOrder
                                                 ? 'bg-gradient-to-r from-blue-400 to-indigo-400 cursor-not-allowed' 
                                                 : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl'
                                         }`}
